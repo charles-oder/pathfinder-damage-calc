@@ -16,7 +16,18 @@ describe('multi-die-roller.ts', () => {
         expect(actualValue).to.equal(expectedValue)
         expect(passedArg).to.equal(6)
     }),
-    it('rolls 3 dice', () => {
+    it('rolls 2 dice with bonus', () => {
+        const mockDieRoller = new MockDieRoller()
+        mockDieRoller.setMockValue(1)
+        const testObject = new MultiDieRoller(mockDieRoller)
+        const expectedValue = 7
+
+        const actualValue = testObject.roll(2, 6, 5)
+        const passedArg = mockDieRoller.lastSidesArg
+
+        expect(actualValue).to.equal(expectedValue)
+        expect(passedArg).to.equal(6)
+    }),it('rolls 3 dice', () => {
         const mockDieRoller = new MockDieRoller()
         mockDieRoller.setMockValue(1)
         const testObject = new MultiDieRoller(mockDieRoller)
@@ -40,7 +51,18 @@ describe('multi-die-roller.ts', () => {
         expect(actualValue).to.equal(expectedValue)
         expect(passedArg).to.equal(6)
     }),
-    it('rolls 3 dice from string', () => {
+    it('rolls 2 dice from string with bonus', () => {
+        const mockDieRoller = new MockDieRoller()
+        mockDieRoller.setMockValue(1)
+        const testObject = new MultiDieRoller(mockDieRoller)
+        const expectedValue = 7
+
+        const actualValue = testObject.rollDieString('2d6+5')
+        const passedArg = mockDieRoller.lastSidesArg
+
+        expect(actualValue).to.equal(expectedValue)
+        expect(passedArg).to.equal(6)
+    }),it('rolls 3 dice from string', () => {
         const mockDieRoller = new MockDieRoller()
         mockDieRoller.setMockValue(1)
         const testObject = new MultiDieRoller(mockDieRoller)
