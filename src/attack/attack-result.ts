@@ -38,3 +38,12 @@ export class FullAttackResult {
     }
 
 }
+
+export class FullAttackResultSet {
+
+    base: Array<FullAttackResult> = []
+    baseColor = '#DDD'
+    comp: Array<FullAttackResult> = []
+    compColor = '#BBB'
+
+}
