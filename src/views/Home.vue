@@ -2,18 +2,8 @@
   <div class="home">
     <div class="settings">
       <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
-      <div class="settings-container">
-        <div class="base">BASE</div>
-        <div>Attacks<input v-model="attacks"/> Damage<input v-model="damage"/></div>
-        <div>Crit Threshold:<input style="width: 2em;" v-model="critThreshold"/> Crit Multiplier<input style="width: 1em;" v-model="critMultiplier"/></div>
-        <div>Jabbing Style:<input v-model="jabbingStyle" type="checkbox"/> Jabbing Master:<input v-model="jabbingMaster" type="checkbox"/></div>
-      </div>
-      <div class="settings-container">
-        <div class="comp">COMPARE</div>
-        <div>Attacks:<input v-model="compAttacks"/> Damage<input v-model="compDamage"/></div>
-        <div>Crit Threshold:<input style="width: 2em;" v-model="compCritThreshold"/> Crit Multiplier:<input style="width: 1em;" v-model="compCritMultiplier"/></div>
-        <div>Jabbing Style:<input v-model="compJabbingStyle" type="checkbox"/> Jabbing Master:<input v-model="compJabbingMaster" type="checkbox"/></div>
-      </div>
+      <AttackSettingsView class="settings-container" v-model:settings="attackSettings"/>
+      <AttackSettingsView class="settings-container" v-model:settings="compAttackSettings"/>
     </div>
     <button class="calc-button" v-on:click="caclulateClicked()">Calculate</button>
     <div class="results-container">
@@ -34,16 +24,19 @@
 <script lang="ts">
 import { defineComponent, ref, onBeforeMount, onMounted, reactive } from 'vue';
 import SimSettingsView from '@/config/SimSettingsView.vue';
+import AttackSettingsView from '@/config/AttackSettingsView.vue';
 import { FullAttackResult } from '@/attack/attack-result';
 import AttackResolver from '@/attack/attack-resolver';
 import IterativeAttackResolver from '@/attack/iterative-attack-resolver';
 import AppStorage from '@/storage'
 import SimSettings from '@/config/sim-settings'
+import AttackSettings from '@/config/attack-settings'
 
 export default defineComponent({
   name: 'Home',
   components: {
-    SimSettingsView
+    SimSettingsView,
+    AttackSettingsView
   },
   data() {
     return {
@@ -53,19 +46,9 @@ export default defineComponent({
   },
   setup() {
     const simSettings = reactive(new SimSettings());
-    const attacks = ref('+32/+32/+27/+27/+22/+22/+17/+17')
-    const damage = ref('2d10')
-    const critThreshold = ref('20')
-    const critMultiplier = ref('2')
-    const jabbingStyle = ref(true)
-    const jabbingMaster = ref(true)
+    const attackSettings = reactive(new AttackSettings());
+    const compAttackSettings = reactive(new AttackSettings());
     const attackResults = ref(new Array<FullAttackResult>())
-    const compAttacks = ref('+32/+32/+27/+27/+22/+22/+17/+17')
-    const compDamage = ref('2d10')
-    const compCritThreshold = ref('20')
-    const compCritMultiplier = ref('2')
-    const compJabbingStyle = ref(true)
-    const compJabbingMaster = ref(true)
     const compAttackResults = ref(new Array<FullAttackResult>())
     const maxDamage = ref(0)
 
@@ -114,34 +97,29 @@ export default defineComponent({
     }
     const caclulateClicked = function() {
       simSettings.save();
+      attackSettings.save();
       const storage = new AppStorage()
-      storage.attacks = attacks.value
-      storage.damage = damage.value
-      storage.critThreshold = critThreshold.value
-      storage.critMultiplier = critMultiplier.value
-      storage.jabbingStyle = jabbingStyle.value
-      storage.jabbingMaster = jabbingMaster.value
 
       let mod = AttackResolver.nullSyleMod;
-      if (jabbingMaster.value) {
+      if (attackSettings.jabbingMaster) {
         mod = AttackResolver.jabbingMasterMod;
-      } else if (jabbingStyle.value) {
+      } else if (attackSettings.jabbingStyle) {
         mod = AttackResolver.jabbingStyleMod;
       }
       let compMod = AttackResolver.nullSyleMod;
-      if (compJabbingMaster.value) {
+      if (compAttackSettings.jabbingMaster) {
         compMod = AttackResolver.jabbingMasterMod;
-      } else if (compJabbingStyle.value) {
+      } else if (compAttackSettings.jabbingStyle) {
         compMod = AttackResolver.jabbingStyleMod;
       }
       attackResults.value = new Array<FullAttackResult>()
       compAttackResults.value = new Array<FullAttackResult>()
       for (let i = parseInt(simSettings.acMin); i <= parseInt(simSettings.acMax); i++) {
         const resolver = new IterativeAttackResolver(parseInt(simSettings.iterations));
-        attackResults.value.push(resolver.resolveFullAttack(i, attacks.value, parseInt(critThreshold.value), 
-          parseInt(critMultiplier.value), damage.value, mod))
-        compAttackResults.value.push(resolver.resolveFullAttack(i, compAttacks.value, parseInt(compCritThreshold.value), 
-          parseInt(compCritMultiplier.value), compDamage.value, compMod))
+        attackResults.value.push(resolver.resolveFullAttack(i, attackSettings.attacks, parseInt(attackSettings.critThreshold), 
+          parseInt(attackSettings.critMultiplier), attackSettings.damage, mod))
+        compAttackResults.value.push(resolver.resolveFullAttack(i, compAttackSettings.attacks, parseInt(compAttackSettings.critThreshold), 
+          parseInt(compAttackSettings.critMultiplier), compAttackSettings.damage, compMod))
           
       }
 
@@ -149,46 +127,28 @@ export default defineComponent({
     }
     onMounted(() => {
       const storage = new AppStorage()
-      attacks.value = storage.attacks
-      damage.value = storage.damage
-      critThreshold.value = storage.critThreshold
-      critMultiplier.value = storage.critMultiplier
-      jabbingStyle.value = storage.jabbingStyle
-      jabbingMaster.value = storage.jabbingMaster
-      compAttacks.value = storage.attacks
-      compDamage.value = storage.damage
-      compCritThreshold.value = storage.critThreshold
-      compCritMultiplier.value = storage.critMultiplier
-      compJabbingStyle.value = storage.jabbingStyle
-      compJabbingMaster.value = storage.jabbingMaster
+      attackSettings.color = '#42b0db'
+      attackSettings.name = 'BASE'
+      compAttackSettings.color = '#00d300'
+      compAttackSettings.name = 'COMPARE'
 
     });
     
     return {
-      attacks,
-      damage,
-      critThreshold,
-      critMultiplier,
-      jabbingStyle,
-      jabbingMaster,
       attackResults,
       widthForIndex,
       compWidthForIndex,
       acForIndex,
       damageDeltaForIndex,
       caclulateClicked,
-      compAttacks,
-      compDamage,
-      compCritThreshold,
-      compCritMultiplier,
-      compJabbingStyle,
-      compJabbingMaster,
       compAttackResults,
       maxDamage,
       averageHits,
       critRate,
       resultDescription,
-      simSettings
+      simSettings,
+      attackSettings,
+      compAttackSettings
     }
   },
   

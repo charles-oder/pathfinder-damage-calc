@@ -7,12 +7,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, onMounted, reactive, watch, computed } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
-import { FullAttackResult } from '@/attack/attack-result';
-import AttackResolver from '@/attack/attack-resolver';
-import IterativeAttackResolver from '@/attack/iterative-attack-resolver';
-import AppStorage from '@/storage'
+import { defineComponent, computed } from 'vue';
 import SimSettings from '@/config/sim-settings'
 
 export default defineComponent({
@@ -21,12 +16,6 @@ export default defineComponent({
     },
     props: {
         settings: SimSettings
-    },
-    data() {
-        return {
-        }
-    },
-    methods: {
     },
     setup(props, { emit }) {
         const simSettings = computed({
