@@ -8,9 +8,9 @@
     <button v-on:click="caclulateClicked()">Calculate</button>
     <div class="results-container">
       <div class="results-line-item" v-for="(results, index) in attackResults" v-bind:key="index">
-        <div>AC: {{ acForIndex(index) }} Average Hits: {{ (results.totalHits() / iterations).toFixed(1) }} (
-          {{ Math.round(results.totalCrits() / results.totalHits() * 100) }}% crit) Damage/Round: 
-          {{ results.totalDamage() / iterations }} ({{ damageDeltaForIndex(index) }})</div>
+        <div>AC: {{ acForIndex(index) }} Average Hits: {{ (results.totalHits / iterations).toFixed(1) }} (
+          {{ Math.round(results.totalCrits / results.totalHits * 100) }}% crit) Damage/Round: 
+          {{ results.totalDamage / iterations }} ({{ damageDeltaForIndex(index) }})</div>
           <div class="results-meter-bar" v-bind:style="{width: widthForIndex(index)}"></div>
       </div>
     </div>
@@ -48,7 +48,7 @@ export default defineComponent({
     const attackResults = ref(new Array<FullAttackResult>())
 
     const widthForIndex = function(index: number) {
-      const damagePerRound = attackResults.value[index].totalDamage() / parseInt(iterations.value);
+      const damagePerRound = attackResults.value[index].totalDamage / parseInt(iterations.value);
       const maxDamage = 200;
       const damagePercentage = Math.round(damagePerRound / maxDamage * 100)
       return damagePercentage + '%';
@@ -62,7 +62,7 @@ export default defineComponent({
       }
       const lastRound = attackResults.value[index - 1];
       const thisRound = attackResults.value[index];
-      return ((thisRound.totalDamage() / parseInt(iterations.value)) - (lastRound.totalDamage() / parseInt(iterations.value))).toFixed(1)
+      return ((thisRound.totalDamage / parseInt(iterations.value)) - (lastRound.totalDamage / parseInt(iterations.value))).toFixed(1)
     }
     const caclulateClicked = function() {
       const storage = new AppStorage()

@@ -59,7 +59,7 @@ export default class AttackResolver {
         attacks.forEach(attack => {
             let attackMod: (() => number) | null = null;
             if (damageMod) {
-                attackMod = damageMod(result.totalAttacks() + 1, result.totalHits() + 1, this.dieRoller)
+                attackMod = damageMod(result.totalAttacks + 1, result.totalHits + 1, this.dieRoller)
             }
             const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critMult, damage, attackMod)
             result.addResult(attackResult);

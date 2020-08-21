@@ -15,39 +15,26 @@ export class SingleAttackResult {
 
 export class FullAttackResult {
 
-    private resultArray = new Array<SingleAttackResult>();
+    totalAttacks = 0;
+    totalHits = 0;
+    totalCrits = 0;
+    totalBaseDamage = 0;
+    totalDamage = 0;
 
     addResult(result: SingleAttackResult) {
-        this.resultArray.push(result);
+        this.totalAttacks++;
+        this.totalHits += result.isHit ? 1 : 0;
+        this.totalCrits += result.isCrit ? 1 : 0;
+        this.totalBaseDamage += result.baseDamage;
+        this.totalDamage += result.totalDamage;
     }
 
     merge(results: FullAttackResult) {
-        results.resultArray.forEach(element => {
-            this.resultArray.push(element);
-        });
+        this.totalAttacks += results.totalAttacks;
+        this.totalHits += results.totalHits;
+        this.totalCrits += results.totalCrits;
+        this.totalBaseDamage += results.totalBaseDamage;
+        this.totalDamage += results.totalDamage;
     }
 
-    totalAttacks(): number {
-        return this.resultArray.length;
-    }
-
-    totalHits(): number {
-        const hitList: number[] = this.resultArray.map((e) => { return e.isHit ? 1 : 0 })
-        return hitList.reduce((acc, value) => { return acc + value }, 0);
-    }
-
-    totalCrits(): number {
-        const critList: number[] = this.resultArray.map((e) => { return e.isCrit ? 1 : 0 })
-        return critList.reduce((acc, value) => { return acc + value }, 0);
-    }
-
-    totalBaseDamage(): number {
-        const damageList: number[] = this.resultArray.map((e) => { return e.baseDamage })
-        return damageList.reduce((acc, value) => { return acc + value }, 0);
-    }
-
-    totalDamage(): number {
-        const damageList: number[] = this.resultArray.map((e) => { return e.totalDamage })
-        return damageList.reduce((acc, value) => { return acc + value }, 0);
-    }
 }
