@@ -21,6 +21,12 @@ export class FullAttackResult {
         this.resultArray.push(result);
     }
 
+    merge(results: FullAttackResult) {
+        results.resultArray.forEach(element => {
+            this.resultArray.push(element);
+        });
+    }
+
     totalAttacks(): number {
         return this.resultArray.length;
     }

@@ -14,11 +14,13 @@ export default class AttackResolver {
         const attacks: number[] = [];
         const attackStrings = str.split('/');
         attackStrings.forEach(str => { attacks.push(parseInt(str)) });
-        console.log('attacks: ' + JSON.stringify(attacks));
+        Logger.log('attacks: ' + JSON.stringify(attacks));
         return attacks;
     }
 
-    jabbingStyleMod(attack: number, hit: number, roller: MultiDieRoller): () => number {
+    static nullSyleMod: ((attack: number, hit: number, roller: MultiDieRoller) => () => number) | null = null;
+
+    static jabbingStyleMod(attack: number, hit: number, roller: MultiDieRoller): () => number {
         if (hit > 1) {
             return () => { 
                 Logger.log('Hit at least once already, bonus 1d6');
@@ -31,7 +33,7 @@ export default class AttackResolver {
         }
     }
 
-    jabbingMasterMod(attack: number, hit: number, roller: MultiDieRoller): () => number {
+    static jabbingMasterMod(attack: number, hit: number, roller: MultiDieRoller): () => number {
         if (hit > 2) {
             return () => { 
                 Logger.log('Hit at least twice already, bonus 4d6');

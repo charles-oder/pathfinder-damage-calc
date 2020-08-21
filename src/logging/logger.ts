@@ -1,6 +1,6 @@
 export default class Logger {
 
-    static logDebug = true;
+    static logDebug = false;
     static logError = true;
     
 
