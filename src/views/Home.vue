@@ -1,11 +1,7 @@
 <template>
   <div class="home">
     <div class="settings">
-      <div class="settings-container">
-        <div class="scope">SCOPE</div>
-        <div>Iterations<input v-model="iterations"/></div>
-        <div>Target AC min<input v-model="acMin"/> max<input v-model="acMax"/></div>
-      </div>
+      <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
       <div class="settings-container">
         <div class="base">BASE</div>
         <div>Attacks<input v-model="attacks"/> Damage<input v-model="damage"/></div>
@@ -36,16 +32,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, onMounted } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import { defineComponent, ref, onBeforeMount, onMounted, reactive } from 'vue';
+import SimSettingsView from '@/config/SimSettingsView.vue';
 import { FullAttackResult } from '@/attack/attack-result';
 import AttackResolver from '@/attack/attack-resolver';
 import IterativeAttackResolver from '@/attack/iterative-attack-resolver';
 import AppStorage from '@/storage'
+import SimSettings from '@/config/sim-settings'
 
 export default defineComponent({
   name: 'Home',
   components: {
+    SimSettingsView
   },
   data() {
     return {
@@ -54,9 +52,7 @@ export default defineComponent({
   methods: {
   },
   setup() {
-    const iterations = ref('100')
-    const acMin = ref('15')
-    const acMax = ref('40')
+    const simSettings = reactive(new SimSettings());
     const attacks = ref('+32/+32/+27/+27/+22/+22/+17/+17')
     const damage = ref('2d10')
     const critThreshold = ref('20')
@@ -74,31 +70,31 @@ export default defineComponent({
     const maxDamage = ref(0)
 
     const acForIndex = function(index: number) {
-      return index + parseInt(acMin.value);
+      return index + parseInt(simSettings.acMin);
     }
     const damageDeltaForIndex = function(index: number): number {
-      const base = attackResults.value[index].totalDamage / parseInt(iterations.value);
+      const base = attackResults.value[index].totalDamage / parseInt(simSettings.iterations);
       console.log('base: ' + base)
-      const comp = compAttackResults.value[index].totalDamage / parseInt(iterations.value);
+      const comp = compAttackResults.value[index].totalDamage / parseInt(simSettings.iterations);
       console.log('comp: ' + comp)
       return (comp - base);
       // return ((comp.totalDamage / parseInt(iterations.value)) - (base.totalDamage / parseInt(iterations.value))).toFixed(1)
     }
     const widthForIndex = function(index: number) {
-      const damagePerRound = attackResults.value[index].totalDamage / parseInt(iterations.value);
-      const maxDamagePerRound = maxDamage.value / parseInt(iterations.value);
+      const damagePerRound = attackResults.value[index].totalDamage / parseInt(simSettings.iterations);
+      const maxDamagePerRound = maxDamage.value / parseInt(simSettings.iterations);
       const damagePercentage = Math.round(damagePerRound / maxDamagePerRound * 100)
       return damagePercentage + '%';
     }
     const compWidthForIndex = function(index: number) {
-      const damagePerRound = attackResults.value[index].totalDamage / parseInt(iterations.value) + damageDeltaForIndex(index);
-      const maxDamagePerRound = maxDamage.value / parseInt(iterations.value);
+      const damagePerRound = attackResults.value[index].totalDamage / parseInt(simSettings.iterations) + damageDeltaForIndex(index);
+      const maxDamagePerRound = maxDamage.value / parseInt(simSettings.iterations);
       const damagePercentage = Math.round(damagePerRound / maxDamagePerRound * 100)
       return damagePercentage + '%';
     }
     const averageHits = function(index: number, comp: boolean): string {
       const results = comp ? compAttackResults.value[index] : attackResults.value[index];
-      return (results.totalHits / parseInt(iterations.value)).toFixed(1)    
+      return (results.totalHits / parseInt(simSettings.iterations)).toFixed(1)    
     }
     const critRate = function(index: number, comp: boolean): string {
       const results = comp ? compAttackResults.value[index] : attackResults.value[index];
@@ -109,7 +105,7 @@ export default defineComponent({
       return 'AC: ' + acForIndex(index)
         + ' Hits/Round: ' + averageHits(index, comp)
         + ' (' + critRate(index, comp) + ' crit)'
-        + ' Damage/Round: ' + (results.totalDamage / parseInt(iterations.value)).toFixed(1)
+        + ' Damage/Round: ' + (results.totalDamage / parseInt(simSettings.iterations)).toFixed(1)
         + (comp ? ' (' + damageDeltaForIndex(index).toFixed(1) + ')' : '');
     }
     const getMaxDamage = function(attackResults: Array<FullAttackResult>): number {
@@ -117,10 +113,8 @@ export default defineComponent({
       return damageList.reduce((previous, current) => { return Math.max(previous, current) })
     }
     const caclulateClicked = function() {
+      simSettings.save();
       const storage = new AppStorage()
-      storage.iterations = iterations.value
-      storage.acMin = acMin.value
-      storage.acMax = acMax.value
       storage.attacks = attacks.value
       storage.damage = damage.value
       storage.critThreshold = critThreshold.value
@@ -142,8 +136,8 @@ export default defineComponent({
       }
       attackResults.value = new Array<FullAttackResult>()
       compAttackResults.value = new Array<FullAttackResult>()
-      for (let i = parseInt(acMin.value); i <= parseInt(acMax.value); i++) {
-        const resolver = new IterativeAttackResolver(parseInt(iterations.value));
+      for (let i = parseInt(simSettings.acMin); i <= parseInt(simSettings.acMax); i++) {
+        const resolver = new IterativeAttackResolver(parseInt(simSettings.iterations));
         attackResults.value.push(resolver.resolveFullAttack(i, attacks.value, parseInt(critThreshold.value), 
           parseInt(critMultiplier.value), damage.value, mod))
         compAttackResults.value.push(resolver.resolveFullAttack(i, compAttacks.value, parseInt(compCritThreshold.value), 
@@ -155,9 +149,6 @@ export default defineComponent({
     }
     onMounted(() => {
       const storage = new AppStorage()
-      iterations.value = storage.iterations;
-      acMin.value = storage.acMin;
-      acMax.value = storage.acMax
       attacks.value = storage.attacks
       damage.value = storage.damage
       critThreshold.value = storage.critThreshold
@@ -174,9 +165,6 @@ export default defineComponent({
     });
     
     return {
-      iterations,
-      acMin,
-      acMax,
       attacks,
       damage,
       critThreshold,
@@ -199,7 +187,8 @@ export default defineComponent({
       maxDamage,
       averageHits,
       critRate,
-      resultDescription
+      resultDescription,
+      simSettings
     }
   },
   
