@@ -1,7 +1,7 @@
 export default class Logger {
 
-    static logDebug = false;
-    static logError = true;
+    static logDebug = 0;
+    static logError = 1;
     
 
     static log(data: any) {
