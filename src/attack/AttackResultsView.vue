@@ -2,7 +2,7 @@
     <div class="attack-results-view">
       <div class="results-line-item" v-for="(result, index) in results.results" v-bind:key="index">
         <div class="results-container" v-for="(set, barIndex) in result" v-bind:key="barIndex">
-          <div class="results-data">{{ resultDescription(index, barIndex) }}</div>
+          <div class="results-data tooltip">{{ resultDescription(index, barIndex) }}<div class="tooltiptext">{{detailedDescription(index, barIndex)}}</div></div>
           <div class="results-meter-bar base" v-bind:style="{width: widthForResult(set), background: color(barIndex)}"></div>
         </div>
       </div>
@@ -71,19 +71,41 @@ export default defineComponent({
         function critRate(results: FullAttackResult): string {
             return Math.round(results.totalCrits / results.totalHits * 100) + '%'
         }
-        function resultDescription(index: number, barIndex: number) {
+        function resultDescription(index: number, barIndex: number): string {
             const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
+            const ac = results.targetAc;
+            const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
+            const damagePerRound = (results.totalDamage / parseInt(simSettings().iterations)).toFixed(1);
             return 'AC: ' + results.targetAc
                 + ' H/Rnd: ' + averageHits(results)
                 + ' (' + critRate(results) + ' crit)'
-                + ' Dmg/Rnd: ' + (results.totalDamage / parseInt(simSettings().iterations)).toFixed(1)
-                + (barIndex > 0 ? ' (' + damageDeltaForIndex(index, barIndex).toFixed(1) + ')' : '');
+                + ' Dmg/Rnd: ' + damagePerRound
+                + (barIndex > 0 ? ' (' + delta + ')' : '');
+        }
+        function detailedDescription(index: number, barIndex: number): string {
+            const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
+            const ac = results.targetAc;
+            const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
+            const damagePerRound = (results.totalDamage / parseInt(simSettings().iterations)).toFixed(1);
+            let output = 'Target AC: ' + ac
+                + '\n Total Attacks: ' + results.totalAttacks
+                + '\n Total Hits: ' + results.totalHits
+                + '\n Average Hits per Round: ' + averageHits(results)
+                + '\n Total Crits: ' + results.totalCrits
+                + '\n Crit Rate: ' + critRate(results)
+                + '\n Total Damage: ' + results.totalDamage
+                + '\n Damage per Round: ' + damagePerRound
+            if (barIndex > 0) {
+                output += '\n Difference from base: ' + delta
+            }
+            return output
         }
         
         return {
             resultDescription,
             color,
-            widthForResult
+            widthForResult,
+            detailedDescription
         }
 
     }
@@ -107,12 +129,37 @@ export default defineComponent({
   position: absolute;
   top: 0;
   height: 100%;
+  z-index: -1;
 }
 .results-data {
   position: relative;
-  z-index: 1;
 }
 .results-container {
   position: relative;
 }
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 300px;
+  max-width: 50vw;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  white-space: pre-line;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 </style>

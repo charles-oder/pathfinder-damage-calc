@@ -4,8 +4,8 @@
       <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
       <AttackSettingsView class="settings-container" v-model:settings="attackSettings"/>
       <AttackSettingsView class="settings-container" v-model:settings="compAttackSettings"/>
+      <button class="calc-button" v-on:click="caclulateClicked()">Calculate</button>
     </div>
-    <button class="calc-button" v-on:click="caclulateClicked()">Calculate</button>
     <AttackResultsView :results="resultSet" :simSettings="simSettings"/>
   </div>
 </template>
