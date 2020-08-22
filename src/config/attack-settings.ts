@@ -8,8 +8,7 @@ export default class AttackSettings {
     damage = '';
     critThreshold = '';
     critMultiplier = '';
-    jabbingStyle = false;
-    jabbingMaster = false;
+    mods = '';
 
     constructor() {
         const storage = new AppStorage();
@@ -17,8 +16,7 @@ export default class AttackSettings {
         this.damage = storage.damage;
         this.critThreshold = storage.critThreshold;
         this.critMultiplier = storage.critMultiplier;
-        this.jabbingStyle = storage.jabbingStyle;
-        this.jabbingMaster = storage.jabbingMaster;
+        this.mods = storage.mods;
     }
 
     save() {
@@ -27,8 +25,7 @@ export default class AttackSettings {
         storage.damage = this.damage;
         storage.critThreshold = this.critThreshold;
         storage.critMultiplier = this.critMultiplier;
-        storage.jabbingStyle = this.jabbingStyle;
-        storage.jabbingMaster = this.jabbingMaster;
+        storage.mods = this.mods;
 
     }
 }

@@ -47,18 +47,9 @@ export default defineComponent({
       resultSet.colors = ['#42b0db','#00d300']
       resultSet.reset();
 
-      let mod = AttackResolver.nullSyleMod;
-      if (attackSettings.jabbingMaster) {
-        mod = AttackResolver.jabbingMasterMod;
-      } else if (attackSettings.jabbingStyle) {
-        mod = AttackResolver.jabbingStyleMod;
-      }
-      let compMod = AttackResolver.nullSyleMod;
-      if (compAttackSettings.jabbingMaster) {
-        compMod = AttackResolver.jabbingMasterMod;
-      } else if (compAttackSettings.jabbingStyle) {
-        compMod = AttackResolver.jabbingStyleMod;
-      }
+      const mod = AttackResolver.createModFromString(attackSettings.mods);
+      const compMod = AttackResolver.createModFromString(compAttackSettings.mods);
+
       const baseResolver = new AttackResolver();
       for (let i = parseInt(simSettings.acMin); i <= parseInt(simSettings.acMax); i++) {
         for (let iteration = 0; iteration < parseInt(simSettings.iterations); iteration++) {

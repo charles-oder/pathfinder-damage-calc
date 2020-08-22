@@ -12,6 +12,18 @@ export default class AppStorage {
         localStorage['iterations'] = newValue
     }
 
+    get mods(): string {
+        const value: string | undefined = localStorage['mods']
+        if (value) {
+            return value;
+        }
+        return '';
+    }
+
+    set mods(newValue: string) {
+        localStorage['mods'] = newValue
+    }
+
     get acMin(): string {
         const value: string | undefined = localStorage['acMin']
         if (value) {

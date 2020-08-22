@@ -123,8 +123,9 @@ describe('attack-resolver.ts', () => {
         const expectedValue = 7;
         mockDieRoller.rollDieStringReturnValues.set('1d20', [9, 9, 9, 9]);
         mockDieRoller.rollDieStringReturnValues.set('1d6', [1, 1, 1, 1, 1, 1, 1, 1]);
+        const mod = AttackResolver.createModFromString('hit > 1:1d6');
 
-        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingStyleMod)
+        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', mod)
 
         expect(actualValue.totalDamage).to.equal(expectedValue);
         expect(actualValue.totalBaseDamage).to.equal(expectedValue);
@@ -138,8 +139,9 @@ describe('attack-resolver.ts', () => {
         const expectedValue = 3;
         mockDieRoller.rollDieStringReturnValues.set('1d20', [4, 4, 4, 4]);
         mockDieRoller.rollDieStringReturnValues.set('1d6', [1, 1, 1, 1, 1, 1, 1, 1]);
+        const mod = AttackResolver.createModFromString('hit > 1:1d6');
 
-        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingStyleMod)
+        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', mod)
 
         expect(actualValue.totalDamage).to.equal(expectedValue);
         expect(actualValue.totalBaseDamage).to.equal(expectedValue);
@@ -155,8 +157,9 @@ describe('attack-resolver.ts', () => {
         mockDieRoller.rollDieStringReturnValues.set('1d6', [1, 1, 1, 1, 1]);
         mockDieRoller.rollDieStringReturnValues.set('2d6', [2, 2]);
         mockDieRoller.rollDieStringReturnValues.set('4d6', [4, 4, 4]);
+        const mod = AttackResolver.createModFromString('hit > 2:4d6;hit > 1:2d6');
 
-        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingMasterMod)
+        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', mod)
 
         expect(actualValue.totalDamage).to.equal(expectedValue);
         expect(actualValue.totalBaseDamage).to.equal(expectedValue);
@@ -172,8 +175,9 @@ describe('attack-resolver.ts', () => {
         mockDieRoller.rollDieStringReturnValues.set('1d6', [1, 1, 1, 1, 1]);
         mockDieRoller.rollDieStringReturnValues.set('2d6', [2, 2]);
         mockDieRoller.rollDieStringReturnValues.set('4d6', [4, 4, 4]);
+        const mod = AttackResolver.createModFromString('hit > 2:4d6;hit > 1:2d6');
 
-        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingMasterMod)
+        const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', mod)
 
         expect(actualValue.totalDamage).to.equal(expectedValue);
         expect(actualValue.totalBaseDamage).to.equal(expectedValue);

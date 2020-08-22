@@ -18,38 +18,72 @@ export default class AttackResolver {
         return attacks;
     }
 
-    static nullSyleMod: ((attack: number, hit: number, roller: MultiDieRoller) => () => number) | null = null;
+    static createModFromString(str: string): (attack: number, hit: number, roller: MultiDieRoller) => () => number {
+        const commands = str.split(';');
+        const mods: ((attack: number, hit: number, roller: MultiDieRoller) => number)[] = [];
+        commands.forEach((command) => {
+            mods.push(this.createCommand(command))
+        });
 
-    static jabbingStyleMod(attack: number, hit: number, roller: MultiDieRoller): () => number {
-        if (hit > 1) {
-            return () => { 
-                Logger.log('Hit at least once already, bonus 1d6');
-                return roller.rollDieString('1d6') 
+        return (attack, hit, roller) => {
+            return () => {
+                let total = 0;
+                for (let i = 0; i < mods.length; i++) {
+                    total += mods[i](attack, hit, roller);
+                    if (total > 0) {
+                        return total;
+                    }
+                }
+                return total;
             }
-        }
-        return () => { 
-            Logger.log('First hit, no bonus');
-            return 0 
         }
     }
 
-    static jabbingMasterMod(attack: number, hit: number, roller: MultiDieRoller): () => number {
-        if (hit > 2) {
-            return () => { 
-                Logger.log('Hit at least twice already, bonus 4d6');
-                return roller.rollDieString('4d6') 
+    static createCommand(str: string): ((attack: number, hit: number, roller: MultiDieRoller) => number) {
+        const components = str.split(':');
+        if (components.length < 2) {
+            return (attack, hit, roller) => { return 0 }
+        }
+        const check = components[0];
+        const damage = components[1];
+
+        if (check.includes('attack')) {
+            if (check.includes('< ')) {
+                const value = parseInt(check.split('<')[1]);
+                return (attack, hit, roller) => { return attack < value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('<= ')) {
+                const value = parseInt(check.split('<=')[1]);
+                return (attack, hit, roller) => { return attack <= value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('= ')) {
+                const value = parseInt(check.split('=')[1]);
+                return (attack, hit, roller) => { return attack == value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('>= ')) {
+                const value = parseInt(check.split('>=')[1]);
+                return (attack, hit, roller) => { return attack >= value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('> ')) {
+                const value = parseInt(check.split('>')[1]);
+                return (attack, hit, roller) => { return attack > value ? roller.rollDieString(damage) : 0 }
+            }
+
+        } else if (check.includes('hit')) {
+            if (check.includes('< ')) {
+                const value = parseInt(check.split('<')[1]);
+                return (attack, hit, roller) => { return hit < value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('<= ')) {
+                const value = parseInt(check.split('<=')[1]);
+                return (attack, hit, roller) => { return hit <= value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('= ')) {
+                const value = parseInt(check.split('=')[1]);
+                return (attack, hit, roller) => { return hit == value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('>= ')) {
+                const value = parseInt(check.split('>=')[1]);
+                return (attack, hit, roller) => { return hit >= value ? roller.rollDieString(damage) : 0 }
+            } else if(check.includes('> ')) {
+                const value = parseInt(check.split('>')[1]);
+                return (attack, hit, roller) => { return hit > value ? roller.rollDieString(damage) : 0 }
             }
         }
-        if (hit > 1) {
-            return () => { 
-                Logger.log('Hit at least once already, bonus 2d6');
-                return roller.rollDieString('2d6') 
-            }
-        }
-        return () => { 
-            Logger.log('First hit, no bonus');
-            return 0 
-        }
+        return (attack, hit, roller) => { return 0 }
     }
 
     resolveFullAttack(targetAc: number, attackBonuses: string, critThreshold: number, critMult: number, 

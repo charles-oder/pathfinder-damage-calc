@@ -74,9 +74,9 @@ export default defineComponent({
         function resultDescription(index: number, barIndex: number) {
             const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
             return 'AC: ' + results.targetAc
-                + ' Hits/Round: ' + averageHits(results)
+                + ' H/Rnd: ' + averageHits(results)
                 + ' (' + critRate(results) + ' crit)'
-                + ' Damage/Round: ' + (results.totalDamage / parseInt(simSettings().iterations)).toFixed(1)
+                + ' Dmg/Rnd: ' + (results.totalDamage / parseInt(simSettings().iterations)).toFixed(1)
                 + (barIndex > 0 ? ' (' + damageDeltaForIndex(index, barIndex).toFixed(1) + ')' : '');
         }
         
