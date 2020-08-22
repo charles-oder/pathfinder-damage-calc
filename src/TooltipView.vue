@@ -29,17 +29,18 @@ export default defineComponent({
 
             const sourceRect = tooltip.getBoundingClientRect();
 
-            if ((sourceRect.x + tooltipRect.width) > window.innerWidth) {
+            const averageScrollBarWidth = 20;
+            if ((sourceRect.x + tooltipRect.width) > window.innerWidth - averageScrollBarWidth) {
                 tipX = -tooltipRect.width;
             }
-            if (sourceRect.y + tooltipRect.height >  window.innerHeight) {
+            if (sourceRect.y + tooltipRect.height >  window.innerHeight - averageScrollBarWidth) {
                 tipY = -tooltipRect.height;
             }
-            if ((sourceRect.x + tipX) < 0) {
-                tipX = -sourceRect.x + 5;
+            if ((sourceRect.x + tipX) < 10) {
+                tipX = -sourceRect.x + 10;
             }
-            if ((sourceRect.y + tipY) < 0) {
-                tipY = -sourceRect.y + 5;
+            if ((sourceRect.y + tipY) < 10) {
+                tipY = -sourceRect.y + 10;
             }
 
             tooltipText.style.top = tipY + 'px';
@@ -68,15 +69,12 @@ export default defineComponent({
 
 .tooltip-view .tooltiptext {
   visibility: hidden;
-  width: 200px;
-  max-width: 50vw;
+  width: 300px;
   background-color: black;
   color: #fff;
   text-align: center;
   border-radius: 6px;
   padding: 5px;
-  top: 100%;
-  left: -100px;
   white-space: pre-line;
 
   /* Position the tooltip */
