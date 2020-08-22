@@ -35,8 +35,6 @@ export default defineComponent({
             if (sourceRect.y + tooltipRect.height >  window.innerHeight) {
                 tipY = -tooltipRect.height;
             }
-            console.log('x: ' + tipX + ', y: ' + tipY)
-            console.log('source: x: ' + sourceRect.x, ', y: ' + sourceRect.y)
             if ((sourceRect.x + tipX) < 0) {
                 tipX = -sourceRect.x + 5;
             }
