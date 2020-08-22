@@ -72,7 +72,7 @@ export default class AttackResolver {
         const naturalRoll = this.dieRoller.rollDieString('1d20');
         Logger.log('naturalRoll: ' + naturalRoll);
         if (naturalRoll == 1) {
-            return new SingleAttackResult(false, false, 0, 0);
+            return new SingleAttackResult(targetAc, false, false, 0, 0);
         }
         const modifiedRoll = naturalRoll + bonusToHit;
         Logger.log('modifiedRoll: ' + modifiedRoll);
@@ -96,13 +96,13 @@ export default class AttackResolver {
                 const isCrit = modifiedConfirm >= targetAc;
                 Logger.log('isCrit: ' + isCrit);
                 if (isCrit) {
-                    return new SingleAttackResult(isHit, isCrit, baseDamage, baseDamage * critMult);
+                    return new SingleAttackResult(targetAc, isHit, isCrit, baseDamage, baseDamage * critMult);
                 }
             }
-            return new SingleAttackResult(isHit, false, baseDamage, baseDamage);
+            return new SingleAttackResult(targetAc, isHit, false, baseDamage, baseDamage);
         }
 
-        return new SingleAttackResult(false, false, 0, 0);
+        return new SingleAttackResult(targetAc, false, false, 0, 0);
     }
 
 }

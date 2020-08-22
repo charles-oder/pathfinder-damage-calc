@@ -1,11 +1,13 @@
 export class SingleAttackResult {
 
+    readonly targetAc: number;
     readonly isHit: boolean;
     readonly isCrit: boolean;
     readonly baseDamage: number;
     readonly totalDamage: number;
 
-    constructor(isHit: boolean, isCrit: boolean, baseDamage: number, totalDamage: number) {
+    constructor(targetAc: number, isHit: boolean, isCrit: boolean, baseDamage: number, totalDamage: number) {
+        this.targetAc = targetAc;
         this.isHit = isHit;
         this.isCrit = isCrit;
         this.baseDamage = baseDamage;
@@ -15,6 +17,7 @@ export class SingleAttackResult {
 
 export class FullAttackResult {
 
+    targetAc = 0;
     totalAttacks = 0;
     totalHits = 0;
     totalCrits = 0;
@@ -22,6 +25,7 @@ export class FullAttackResult {
     totalDamage = 0;
 
     addResult(result: SingleAttackResult) {
+        this.targetAc = result.targetAc;
         this.totalAttacks++;
         this.totalHits += result.isHit ? 1 : 0;
         this.totalCrits += result.isCrit ? 1 : 0;
@@ -30,6 +34,7 @@ export class FullAttackResult {
     }
 
     merge(results: FullAttackResult) {
+        this.targetAc = results.targetAc;
         this.totalAttacks += results.totalAttacks;
         this.totalHits += results.totalHits;
         this.totalCrits += results.totalCrits;
@@ -41,9 +46,21 @@ export class FullAttackResult {
 
 export class FullAttackResultSet {
 
-    base: Array<FullAttackResult> = []
-    baseColor = '#DDD'
-    comp: Array<FullAttackResult> = []
-    compColor = '#BBB'
+    results: Array<Array<FullAttackResult>> = []
+    colors: Array<string> = []
+
+    addResult(index: number, attackSet: number, result: FullAttackResult) {
+        if (this.results.length < index + 1) {
+            this.results.push([]);
+        }
+        if (this.results[index].length < attackSet + 1) {
+            this.results[index].push(new FullAttackResult());
+        }
+        this.results[index][attackSet].merge(result);
+    }
+
+    reset() {
+        this.results = []
+    }
 
 }

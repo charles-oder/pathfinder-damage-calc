@@ -1,13 +1,9 @@
 <template>
     <div class="attack-results-view">
-      <div class="results-line-item" v-for="(results, index) in results.base" v-bind:key="index">
-        <div class="results-container">
-          <div class="results-data">{{ resultDescription(index, false) }}</div>
-          <div class="results-meter-bar base" v-bind:style="{width: widthForIndex(index), background: color(false)}"></div>
-        </div>
-        <div class="results-container">
-          <div class="results-data">{{ resultDescription(index, true) }}</div>
-          <div class="results-meter-bar comp" v-bind:style="{width: compWidthForIndex(index), background: color(true)}"></div>
+      <div class="results-line-item" v-for="(result, index) in results.results" v-bind:key="index">
+        <div class="results-container" v-for="(set, barIndex) in result" v-bind:key="barIndex">
+          <div class="results-data">{{ resultDescription(index, barIndex) }}</div>
+          <div class="results-meter-bar base" v-bind:style="{width: widthForResult(set), background: color(barIndex)}"></div>
         </div>
       </div>
     </div>
@@ -35,74 +31,59 @@ export default defineComponent({
 
     },
     setup(props, { emit }) {
-        function baseResults(): Array<FullAttackResult> {
-            return props.results?.base ?? [];
-        }
-        function compResults(): Array<FullAttackResult> {
-            return props.results?.comp ?? [];
-        }
         function simSettings(): SimSettings {
             return props.simSettings ?? new SimSettings();
         }
-        function color(comp: boolean): string | undefined {
-            return comp ? props.results?.compColor : props.results?.baseColor
+        function color(index: number): string | undefined {
+            return props.results?.colors[index] ?? '#CCC'
         }
         function getMaxDamage(attackResults: Array<FullAttackResult>): number {
             const damageList = attackResults.map((e) => { return e.totalDamage });
             return damageList.reduce((previous, current) => { return Math.max(previous, current) }, 0)
         }
         function maxDamage(): number {
-            return Math.max(getMaxDamage(compResults()), getMaxDamage(baseResults()))
+            let max = 0;
+            props.results?.results.forEach((row) => {
+                row.forEach((r) => {max = Math.max(max, r.totalDamage)});
+            });
+            return max
         }
 
         function acForIndex(index: number) {
             return index + parseInt(simSettings().acMin);
         }
-        function damageDeltaForIndex(index: number): number {
-            const base = baseResults()[index].totalDamage / parseInt(simSettings().iterations);
-            const comp = compResults()[index].totalDamage / parseInt(simSettings().iterations);
+        function damageDeltaForIndex(index: number, barIndex: number): number {
+            const baseResults = props.results?.results[index][0] ?? new FullAttackResult()
+            const compResults = props.results?.results[index][barIndex] ?? new FullAttackResult()
+            const base = baseResults.totalDamage / parseInt(simSettings().iterations);
+            const comp = compResults.totalDamage / parseInt(simSettings().iterations);
             return (comp - base);
         }
-        function widthForIndex(index: number) {
-            const damagePerRound = baseResults()[index].totalDamage / parseInt(simSettings().iterations);
-            console.log('base-damagePerRound: ' + damagePerRound)
+        function widthForResult(result: FullAttackResult): string {
+            const damagePerRound = result.totalDamage / parseInt(simSettings().iterations);
             const maxDamagePerRound = maxDamage() / parseInt(simSettings().iterations);
-            console.log('base-maxDamagePerRound: ' + maxDamagePerRound)
             const damagePercentage = Math.round(damagePerRound / maxDamagePerRound * 100)
-            console.log('base-width: ' + damagePercentage)
             return damagePercentage + '%';
         }
-        function compWidthForIndex(index: number) {
-            const damagePerRound = baseResults()[index].totalDamage / parseInt(simSettings().iterations) + damageDeltaForIndex(index);
-            console.log('comp-damagePerRound: ' + damagePerRound)
-            const maxDamagePerRound = maxDamage() / parseInt(simSettings().iterations);
-            console.log('comp-maxDamagePerRound: ' + maxDamagePerRound)
-            const damagePercentage = Math.round(damagePerRound / maxDamagePerRound * 100)
-            console.log('comp-width: ' + damagePercentage)
-            return damagePercentage + '%';
-        }
-        function averageHits(index: number, comp: boolean): string {
-            const results = comp ? compResults()[index] : baseResults()[index];
+        function averageHits(results: FullAttackResult): string {
             return (results.totalHits / parseInt(simSettings().iterations)).toFixed(1)    
         }
-        function critRate(index: number, comp: boolean): string {
-            const results = comp ? compResults()[index] : baseResults()[index];
+        function critRate(results: FullAttackResult): string {
             return Math.round(results.totalCrits / results.totalHits * 100) + '%'
         }
-        function resultDescription(index: number, comp: boolean) {
-            const results = comp ? compResults()[index] : baseResults()[index];
-            return 'AC: ' + acForIndex(index)
-                + ' Hits/Round: ' + averageHits(index, comp)
-                + ' (' + critRate(index, comp) + ' crit)'
+        function resultDescription(index: number, barIndex: number) {
+            const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
+            return 'AC: ' + results.targetAc
+                + ' Hits/Round: ' + averageHits(results)
+                + ' (' + critRate(results) + ' crit)'
                 + ' Damage/Round: ' + (results.totalDamage / parseInt(simSettings().iterations)).toFixed(1)
-                + (comp ? ' (' + damageDeltaForIndex(index).toFixed(1) + ')' : '');
+                + (barIndex > 0 ? ' (' + damageDeltaForIndex(index, barIndex).toFixed(1) + ')' : '');
         }
         
         return {
             resultDescription,
-            widthForIndex,
-            compWidthForIndex,
-            color
+            color,
+            widthForResult
         }
 
     }

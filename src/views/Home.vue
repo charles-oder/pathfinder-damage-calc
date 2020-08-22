@@ -6,7 +6,7 @@
       <AttackSettingsView class="settings-container" v-model:settings="compAttackSettings"/>
     </div>
     <button class="calc-button" v-on:click="caclulateClicked()">Calculate</button>
-    <AttackResultsView :results="results" :simSettings="simSettings"/>
+    <AttackResultsView :results="resultSet" :simSettings="simSettings"/>
   </div>
 </template>
 
@@ -38,13 +38,14 @@ export default defineComponent({
     const simSettings = reactive(new SimSettings());
     const attackSettings = reactive(new AttackSettings());
     const compAttackSettings = reactive(new AttackSettings());
-    const results = reactive(new FullAttackResultSet())
+    const results = reactive(new FullAttackResultSet());
+    const resultSet = reactive(new FullAttackResultSet());
 
     const caclulateClicked = function() {
       simSettings.save();
       attackSettings.save();
-      results.base = []
-      results.comp = []
+      resultSet.colors = ['#42b0db','#00d300']
+      resultSet.reset();
 
       let mod = AttackResolver.nullSyleMod;
       if (attackSettings.jabbingMaster) {
@@ -58,23 +59,23 @@ export default defineComponent({
       } else if (compAttackSettings.jabbingStyle) {
         compMod = AttackResolver.jabbingStyleMod;
       }
+      const baseResolver = new AttackResolver();
       for (let i = parseInt(simSettings.acMin); i <= parseInt(simSettings.acMax); i++) {
-        const resolver = new IterativeAttackResolver(parseInt(simSettings.iterations));
-        results.base.push(resolver.resolveFullAttack(i, attackSettings.attacks, parseInt(attackSettings.critThreshold), 
+        for (let iteration = 0; iteration < parseInt(simSettings.iterations); iteration++) {
+          const index = i - parseInt(simSettings.acMin)
+          resultSet.addResult(index, 0, baseResolver.resolveFullAttack(i, attackSettings.attacks, parseInt(attackSettings.critThreshold), 
           parseInt(attackSettings.critMultiplier), attackSettings.damage, mod))
-        results.comp.push(resolver.resolveFullAttack(i, compAttackSettings.attacks, parseInt(compAttackSettings.critThreshold), 
+          resultSet.addResult(index, 1, baseResolver.resolveFullAttack(i, compAttackSettings.attacks, parseInt(compAttackSettings.critThreshold), 
           parseInt(compAttackSettings.critMultiplier), compAttackSettings.damage, compMod))
-          
+        
+        }
       }
-
     }
     onMounted(() => {
       attackSettings.color = '#42b0db'
       attackSettings.name = 'BASE'
       compAttackSettings.color = '#00d300'
       compAttackSettings.name = 'COMPARE'
-      results.baseColor = attackSettings.color;
-      results.compColor = compAttackSettings.color;
 
     });
     
@@ -83,7 +84,8 @@ export default defineComponent({
       simSettings,
       attackSettings,
       compAttackSettings,
-      results
+      results,
+      resultSet
     }
   },
   
