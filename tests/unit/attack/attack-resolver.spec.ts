@@ -96,11 +96,11 @@ describe('attack-resolver.ts', () => {
 
         const actualValue = testObject.resolveFullAttack(10, '+6/+1', 20, 2, '1d6')
 
-        expect(actualValue.totalDamage()).to.equal(expectedValue);
-        expect(actualValue.totalBaseDamage()).to.equal(2);
-        expect(actualValue.totalAttacks()).to.equal(2);
-        expect(actualValue.totalHits()).to.equal(2);
-        expect(actualValue.totalCrits()).to.equal(0);
+        expect(actualValue.totalDamage).to.equal(expectedValue);
+        expect(actualValue.totalBaseDamage).to.equal(2);
+        expect(actualValue.totalAttacks).to.equal(2);
+        expect(actualValue.totalHits).to.equal(2);
+        expect(actualValue.totalCrits).to.equal(0);
     }),
     it('full attack half hit', () => {
         const mockDieRoller = new MockMultiDieRoller();
@@ -111,11 +111,11 @@ describe('attack-resolver.ts', () => {
 
         const actualValue = testObject.resolveFullAttack(10, '+6/+1', 20, 2, '1d6')
 
-        expect(actualValue.totalDamage()).to.equal(expectedValue);
-        expect(actualValue.totalBaseDamage()).to.equal(expectedValue);
-        expect(actualValue.totalAttacks()).to.equal(2);
-        expect(actualValue.totalHits()).to.equal(1);
-        expect(actualValue.totalCrits()).to.equal(0);
+        expect(actualValue.totalDamage).to.equal(expectedValue);
+        expect(actualValue.totalBaseDamage).to.equal(expectedValue);
+        expect(actualValue.totalAttacks).to.equal(2);
+        expect(actualValue.totalHits).to.equal(1);
+        expect(actualValue.totalCrits).to.equal(0);
     }),
     it('jabbing style mod all hit', () => {
         const mockDieRoller = new MockMultiDieRoller();
@@ -126,11 +126,11 @@ describe('attack-resolver.ts', () => {
 
         const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingStyleMod)
 
-        expect(actualValue.totalDamage()).to.equal(expectedValue);
-        expect(actualValue.totalBaseDamage()).to.equal(expectedValue);
-        expect(actualValue.totalAttacks()).to.equal(4);
-        expect(actualValue.totalHits()).to.equal(4);
-        expect(actualValue.totalCrits()).to.equal(0);
+        expect(actualValue.totalDamage).to.equal(expectedValue);
+        expect(actualValue.totalBaseDamage).to.equal(expectedValue);
+        expect(actualValue.totalAttacks).to.equal(4);
+        expect(actualValue.totalHits).to.equal(4);
+        expect(actualValue.totalCrits).to.equal(0);
     }),
     it('jabbing style mod half hit', () => {
         const mockDieRoller = new MockMultiDieRoller();
@@ -141,11 +141,11 @@ describe('attack-resolver.ts', () => {
 
         const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingStyleMod)
 
-        expect(actualValue.totalDamage()).to.equal(expectedValue);
-        expect(actualValue.totalBaseDamage()).to.equal(expectedValue);
-        expect(actualValue.totalAttacks()).to.equal(4);
-        expect(actualValue.totalHits()).to.equal(2);
-        expect(actualValue.totalCrits()).to.equal(0);
+        expect(actualValue.totalDamage).to.equal(expectedValue);
+        expect(actualValue.totalBaseDamage).to.equal(expectedValue);
+        expect(actualValue.totalAttacks).to.equal(4);
+        expect(actualValue.totalHits).to.equal(2);
+        expect(actualValue.totalCrits).to.equal(0);
     }),
     it('jabbing master mod all hit', () => {
         const mockDieRoller = new MockMultiDieRoller();
@@ -158,11 +158,11 @@ describe('attack-resolver.ts', () => {
 
         const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingMasterMod)
 
-        expect(actualValue.totalDamage()).to.equal(expectedValue);
-        expect(actualValue.totalBaseDamage()).to.equal(expectedValue);
-        expect(actualValue.totalAttacks()).to.equal(4);
-        expect(actualValue.totalHits()).to.equal(4);
-        expect(actualValue.totalCrits()).to.equal(0);
+        expect(actualValue.totalDamage).to.equal(expectedValue);
+        expect(actualValue.totalBaseDamage).to.equal(expectedValue);
+        expect(actualValue.totalAttacks).to.equal(4);
+        expect(actualValue.totalHits).to.equal(4);
+        expect(actualValue.totalCrits).to.equal(0);
     }),
     it('jabbing master mod half hit', () => {
         const mockDieRoller = new MockMultiDieRoller();
@@ -175,10 +175,10 @@ describe('attack-resolver.ts', () => {
 
         const actualValue = testObject.resolveFullAttack(10, '+6/+6/+1/+1', 20, 2, '1d6', AttackResolver.jabbingMasterMod)
 
-        expect(actualValue.totalDamage()).to.equal(expectedValue);
-        expect(actualValue.totalBaseDamage()).to.equal(expectedValue);
-        expect(actualValue.totalAttacks()).to.equal(4);
-        expect(actualValue.totalHits()).to.equal(2);
-        expect(actualValue.totalCrits()).to.equal(0);
+        expect(actualValue.totalDamage).to.equal(expectedValue);
+        expect(actualValue.totalBaseDamage).to.equal(expectedValue);
+        expect(actualValue.totalAttacks).to.equal(4);
+        expect(actualValue.totalHits).to.equal(2);
+        expect(actualValue.totalCrits).to.equal(0);
     })
 })
