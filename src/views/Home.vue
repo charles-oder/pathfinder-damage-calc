@@ -1,9 +1,9 @@
 <template>
   <div class="home">
     <div class="settings">
-      <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
       <AttackSettingsView class="settings-container" v-model:settings="attackSettings"/>
       <AttackSettingsView class="settings-container" v-model:settings="compAttackSettings"/>
+      <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
       <button class="calc-button" v-on:click="caclulateClicked()">Calculate</button>
     </div>
     <AttackResultsView :results="resultSet" :simSettings="simSettings"/>
@@ -43,7 +43,6 @@ export default defineComponent({
 
     const caclulateClicked = function() {
       simSettings.save();
-      debugger
       attackSettings.save();
       resultSet.colors = ['#42b0db','#00d300']
       resultSet.reset();
@@ -88,16 +87,16 @@ export default defineComponent({
 .settings {
   position: relative;
   display: block;
+  margin: 1em 5%;
 }
 .calc-button {
-  width: 50%;
-  margin: 1% 25%;
-  padding: 1em;
+  width: 100%;
+  height: 40px;
   display: block;
 }
 .settings-container {
   float: left;
-  padding: 1em;
+  width: 30%;
 }
 .results-container {
   display: inline-block;
@@ -125,7 +124,22 @@ export default defineComponent({
 .results-container {
   position: relative;
 }
-a {
-  color: #42b983;
+
+@media only screen and (max-width: 1120px) {
+  .settings-container {
+    width: 45%;
+  }
+  body {
+    background-color: lightblue;
+  }
 }
+@media only screen and (max-width: 850px) {
+  .settings-container {
+    width: 90%;
+  }
+  body {
+    background-color: lightblue;
+  }
+}
+
 </style>

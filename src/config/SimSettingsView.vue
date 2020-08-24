@@ -2,7 +2,8 @@
     <div class="sim-settings-view">
         <div class="sim-settings-header">SCOPE</div>
         <div>Iterations:<input v-model="simSettings.iterations"/> <TooltipView :text="iterationTooltip"/></div>
-        <div>Target AC <TooltipView :text="targetAcTooltip"/> min<input v-model="simSettings.acMin"/> max<input v-model="simSettings.acMax"/></div>
+        <div>Target AC <TooltipView :text="targetAcTooltip"/> min<input v-model="simSettings.acMin"/></div>
+        <div> max<input v-model="simSettings.acMax"/></div>
     </div>
 </template>
 
@@ -39,6 +40,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .sim-settings-view {
   position: relative;
+  padding: 5px 5px 10px 5px;
 }
 .sim-settings-header {
   background-color: #CCC;

@@ -87,16 +87,17 @@ export default defineComponent({
             const ac = results.targetAc;
             const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
             const damagePerRound = (results.totalDamage / parseInt(simSettings().iterations)).toFixed(1);
+            const hitPercentage = (results.totalHits / results.totalAttacks * 100).toFixed(1)
             let output = 'Target AC: ' + ac
                 + '\n Total Attacks: ' + results.totalAttacks
                 + '\n Total Hits: ' + results.totalHits
-                + '\n Average Hits per Round: ' + averageHits(results)
+                + '\n Avg Hits/rnd: ' + averageHits(results) + ' (' + hitPercentage + '%) '
                 + '\n Total Crits: ' + results.totalCrits
                 + '\n Crit Rate: ' + critRate(results)
                 + '\n Base Damage: ' + results.totalBaseDamage
                 + '\n Crit Damage: ' + (results.totalDamage - results.totalBaseDamage)
                 + '\n Total Damage: ' + results.totalDamage
-                + '\n Damage per Round: ' + damagePerRound
+                + '\n Damage/rnd: ' + damagePerRound
             if (barIndex > 0) {
                 output += '\n Difference from base: ' + delta
             }
