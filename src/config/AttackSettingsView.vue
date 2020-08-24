@@ -1,11 +1,11 @@
 <template>
     <div class="attack-settings-view">
         <div class="sim-settings-header" v-bind:style="{background: attackSettings.color}">{{attackSettings.name}}</div>
-        <div>Attacks<input v-model="attackSettings.attacks"/> <TooltipView :text="attacksTooltip"/></div>
-        <div>Damage<input v-model="attackSettings.damage"/> <TooltipView :text="damageToolitp"/></div>
-        <div>Crit Threshold:<input style="width: 2em;" v-model="attackSettings.critThreshold"/> <TooltipView :text="critThresholdTooltip"/></div>
-        <div>Crit Bonus Damage<input v-model="attackSettings.critBonusDamage"/> <TooltipView :text="critDamageBonusTooltip"/></div>
-        <div>Mods:<input v-model="attackSettings.mods"/> <TooltipView :text="modsTooltip"/></div>
+        <div class="row">Attacks:<input v-model="attackSettings.attacks"/> <TooltipView :text="attacksTooltip"/></div>
+        <div class="row">Damage:<input v-model="attackSettings.damage"/> <TooltipView :text="damageToolitp"/></div>
+        <div class="row">Crit Threshold:<input style="width: 2em;" v-model="attackSettings.critThreshold"/> <TooltipView :text="critThresholdTooltip"/></div>
+        <div class="row">Crit Bonus Damage:<input v-model="attackSettings.critBonusDamage"/> <TooltipView :text="critDamageBonusTooltip"/></div>
+        <div class="row">Mods:<input v-model="attackSettings.mods"/> <TooltipView :text="modsTooltip"/></div>
     </div>
 </template>
 
@@ -57,4 +57,9 @@ export default defineComponent({
   position: relative;
   padding: 5px 5px 10px 5px;
 }
+.attack-settings-view .row {
+  display: inline-block;
+  padding: 2px 5px;
+}
+
 </style>
