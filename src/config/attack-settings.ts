@@ -9,6 +9,7 @@ export default class AttackSettings {
     critThreshold = '';
     critBonusDamage = '';
     mods = '';
+    damageReduction = '';
 
     constructor() {
         const storage = new AppStorage();
@@ -17,6 +18,7 @@ export default class AttackSettings {
         this.critThreshold = storage.critThreshold;
         this.critBonusDamage = storage.critBonusDamage;
         this.mods = storage.mods;
+        this.damageReduction = storage.damageReduction;
     }
 
     save() {
@@ -26,6 +28,7 @@ export default class AttackSettings {
         storage.critThreshold = this.critThreshold;
         storage.critBonusDamage = this.critBonusDamage;
         storage.mods = this.mods;
+        storage.damageReduction = this.damageReduction;
 
     }
 }

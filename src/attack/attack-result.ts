@@ -4,14 +4,18 @@ export class SingleAttackResult {
     readonly isHit: boolean;
     readonly isCrit: boolean;
     readonly baseDamage: number;
+    readonly modDamage: number;
+    readonly critDamage: number;
     readonly totalDamage: number;
 
-    constructor(targetAc: number, isHit: boolean, isCrit: boolean, baseDamage: number, totalDamage: number) {
+    constructor(targetAc: number, isHit: boolean, isCrit: boolean, baseDamage: number, modDamage: number, critDamage: number, totalDamage: number) {
         this.targetAc = targetAc;
         this.isHit = isHit;
         this.isCrit = isCrit;
         this.baseDamage = baseDamage;
         this.totalDamage = totalDamage;
+        this.modDamage = modDamage;
+        this.critDamage = critDamage;
     }
 }
 
@@ -22,6 +26,8 @@ export class FullAttackResult {
     totalHits = 0;
     totalCrits = 0;
     totalBaseDamage = 0;
+    totalModDamage = 0;
+    totalCritDamage = 0;
     totalDamage = 0;
 
     addResult(result: SingleAttackResult) {
@@ -30,6 +36,8 @@ export class FullAttackResult {
         this.totalHits += result.isHit ? 1 : 0;
         this.totalCrits += result.isCrit ? 1 : 0;
         this.totalBaseDamage += result.baseDamage;
+        this.totalModDamage += result.modDamage;
+        this.totalCritDamage += result.critDamage;
         this.totalDamage += result.totalDamage;
     }
 
@@ -39,6 +47,8 @@ export class FullAttackResult {
         this.totalHits += results.totalHits;
         this.totalCrits += results.totalCrits;
         this.totalBaseDamage += results.totalBaseDamage;
+        this.totalModDamage += results.totalModDamage;
+        this.totalCritDamage += results.totalCritDamage;
         this.totalDamage += results.totalDamage;
     }
 

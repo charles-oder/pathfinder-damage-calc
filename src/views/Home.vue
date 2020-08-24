@@ -55,9 +55,9 @@ export default defineComponent({
         for (let iteration = 0; iteration < parseInt(simSettings.iterations); iteration++) {
           const index = i - parseInt(simSettings.acMin)
           resultSet.addResult(index, 0, baseResolver.resolveFullAttack(i, attackSettings.attacks, parseInt(attackSettings.critThreshold), 
-          attackSettings.critBonusDamage, attackSettings.damage, mod))
+          attackSettings.critBonusDamage, attackSettings.damage, parseInt(attackSettings.damageReduction), mod))
           resultSet.addResult(index, 1, baseResolver.resolveFullAttack(i, compAttackSettings.attacks, parseInt(compAttackSettings.critThreshold), 
-          compAttackSettings.critBonusDamage, compAttackSettings.damage, compMod))
+          compAttackSettings.critBonusDamage, compAttackSettings.damage, parseInt(compAttackSettings.damageReduction), compMod))
         
         }
       }
@@ -128,6 +128,7 @@ export default defineComponent({
 @media only screen and (max-width: 1120px) {
   .settings-container {
     width: 45%;
+    margin: 0 1%;
   }
   body {
     background-color: lightblue;
@@ -136,6 +137,7 @@ export default defineComponent({
 @media only screen and (max-width: 850px) {
   .settings-container {
     width: 90%;
+    margin: 0 5%;
   }
   body {
     background-color: lightblue;

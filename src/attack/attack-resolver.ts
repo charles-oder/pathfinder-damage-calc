@@ -87,7 +87,7 @@ export default class AttackResolver {
     }
 
     resolveFullAttack(targetAc: number, attackBonuses: string, critThreshold: number, critBonusDamage: string, 
-                      damage: string, damageMod: ((attack: number, hit: number, roller: MultiDieRoller) => () => number) | null = null): FullAttackResult {
+                      damage: string, dr: number, damageMod: ((attack: number, hit: number, roller: MultiDieRoller) => () => number) | null = null): FullAttackResult {
         const result = new FullAttackResult();
         const attacks = this.getAttacksFromString(attackBonuses);
         attacks.forEach(attack => {
@@ -95,31 +95,33 @@ export default class AttackResolver {
             if (damageMod) {
                 attackMod = damageMod(result.totalAttacks + 1, result.totalHits + 1, this.dieRoller)
             }
-            const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critBonusDamage, damage, attackMod)
+            const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critBonusDamage, damage, dr, attackMod)
             result.addResult(attackResult);
         });
         return result;
     }
 
     resolveSingleAttack(targetAc: number, bonusToHit: number, critThreshold: number, critBonusDamage: string, 
-                        damage: string, damageMod: (() => number) | null = null): SingleAttackResult {
+                        damage: string, dr: number, damageMod: (() => number) | null = null): SingleAttackResult {
         const naturalRoll = this.dieRoller.rollDieString('1d20');
         Logger.log('naturalRoll: ' + naturalRoll);
         if (naturalRoll == 1) {
-            return new SingleAttackResult(targetAc, false, false, 0, 0);
+            return new SingleAttackResult(targetAc, false, false, 0, 0, 0, 0);
         }
         const modifiedRoll = naturalRoll + bonusToHit;
         Logger.log('modifiedRoll: ' + modifiedRoll);
         const isHit = modifiedRoll >= targetAc || naturalRoll == 20;
+        let baseDamage = 0;
+        let critDamage = 0;
+        let modDamage = 0;
+        let isCrit = false;
 
         Logger.log('isHit: ' + isHit);
         if (isHit) {
             const critThreat = naturalRoll >= critThreshold;
-            let baseDamage = this.dieRoller.rollDieString(damage);
+            baseDamage = this.dieRoller.rollDieString(damage);
             if (damageMod) {
-                const modDamage = damageMod();
-                Logger.log('Mod Damage: ' + modDamage);
-                baseDamage += modDamage;
+                modDamage = damageMod();
             }
             if (critThreat) {
                 Logger.log('critical threat');
@@ -127,18 +129,19 @@ export default class AttackResolver {
                 Logger.log('confirm roll: ' + confirmRoll);
                 const modifiedConfirm = confirmRoll + bonusToHit;
                 Logger.log('modifiedConfirm roll: ' + modifiedConfirm);
-                const isCrit = modifiedConfirm >= targetAc;
+                isCrit = modifiedConfirm >= targetAc;
                 Logger.log('isCrit: ' + isCrit);
-                const critDamage = this.dieRoller.rollDieString(critBonusDamage);
-                Logger.log('critDamage(' + critBonusDamage + '): ' + critDamage);
                 if (isCrit) {
-                    return new SingleAttackResult(targetAc, isHit, isCrit, baseDamage, baseDamage + critDamage);
+                    critDamage = this.dieRoller.rollDieString(critBonusDamage)
                 }
             }
-            return new SingleAttackResult(targetAc, isHit, false, baseDamage, baseDamage);
         }
-
-        return new SingleAttackResult(targetAc, false, false, 0, 0);
+        Logger.log('Base Damage: ' + baseDamage);
+        Logger.log('Mod Damage: ' + modDamage);
+        Logger.log('Crit Damage: ' + critDamage);
+        const totalDamage = Math.max(baseDamage + modDamage + critDamage - dr, 0);
+        Logger.log('totalDamage: ' + totalDamage);
+        return new SingleAttackResult(targetAc, isHit, isCrit, baseDamage, modDamage, critDamage, totalDamage);
     }
 
 }

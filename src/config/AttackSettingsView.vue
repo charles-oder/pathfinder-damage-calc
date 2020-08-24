@@ -5,6 +5,7 @@
         <div class="row">Damage:<input v-model="attackSettings.damage"/> <TooltipView :text="damageToolitp"/></div>
         <div class="row">Crit Threshold:<input style="width: 2em;" v-model="attackSettings.critThreshold"/> <TooltipView :text="critThresholdTooltip"/></div>
         <div class="row">Crit Bonus Damage:<input v-model="attackSettings.critBonusDamage"/> <TooltipView :text="critDamageBonusTooltip"/></div>
+        <div class="row">DR:<input style="width: 2em;" v-model="attackSettings.damageReduction"/> <TooltipView :text="damageReductionTooltip"/></div>
         <div class="row">Mods:<input v-model="attackSettings.mods"/> <TooltipView :text="modsTooltip"/></div>
     </div>
 </template>
@@ -39,13 +40,15 @@ export default defineComponent({
         + ' found.  Example: The Jabbing Master feat says that the second successful hit'
         + ' does an additional 2d6 damage, and that each subsequent attack deals an' 
         + ' additional 4d6 damage this would be written as: \nhit > 2:4d6;hit > 1:2d6';
+        const damageReductionTooltip = 'Damage Reduction.  The amount to reduce each individual attack by.';
         return {
             attackSettings,
             attacksTooltip,
             damageToolitp,
             critThresholdTooltip,
             critDamageBonusTooltip,
-            modsTooltip
+            modsTooltip,
+            damageReductionTooltip
         }
     },
   

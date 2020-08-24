@@ -7,10 +7,10 @@ export default class MockMultiDieRoller extends MultiDieRoller {
     rollDieStringArguments = new Array<string>();
 
     rollDieString(dieString: string): number {
-        Logger.log('[MOCK] Rolling ' + dieString);
+        Logger.mock('Rolling ' + dieString);
         this.rollDieStringArguments.push(dieString);
         const value = this.rollDieStringReturnValues.get(dieString)?.shift();
-        Logger.log('[MOCK] Result ' + value);
+        Logger.mock('Result ' + value);
         if (value) {
             return value;
         }

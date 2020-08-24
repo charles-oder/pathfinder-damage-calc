@@ -1,8 +1,15 @@
 export default class Logger {
 
+    static logMock = 0;
     static logDebug = 0;
     static logError = 1;
     
+
+    static mock(data: any) {
+        if (this.logMock) {
+            console.log('MOCK: ' + data)
+        }
+    }
 
     static log(data: any) {
         if (this.logDebug) {

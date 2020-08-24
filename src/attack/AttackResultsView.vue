@@ -95,7 +95,8 @@ export default defineComponent({
                 + '\n Total Crits: ' + results.totalCrits
                 + '\n Crit Rate: ' + critRate(results)
                 + '\n Base Damage: ' + results.totalBaseDamage
-                + '\n Crit Damage: ' + (results.totalDamage - results.totalBaseDamage)
+                + '\n Crit Damage: ' + results.totalCritDamage
+                + '\n Mod Damage: ' + results.totalModDamage
                 + '\n Total Damage: ' + results.totalDamage
                 + '\n Damage/rnd: ' + damagePerRound
             if (barIndex > 0) {

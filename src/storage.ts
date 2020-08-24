@@ -60,6 +60,18 @@ export default class AppStorage {
         localStorage['attacks'] = newValue
     }
 
+    get damageReduction(): string {
+        const value: string | undefined = localStorage['damageReduction']
+        if (value) {
+            return value;
+        }
+        return '0';
+    }
+
+    set damageReduction(newValue: string) {
+        localStorage['damageReduction'] = newValue
+    }
+
     get damage(): string {
         const value: string | undefined = localStorage['damage']
         if (value) {
