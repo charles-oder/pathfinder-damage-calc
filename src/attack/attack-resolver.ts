@@ -18,91 +18,70 @@ export default class AttackResolver {
         return attacks;
     }
 
-    static createModFromString(str: string): (attack: number, hit: number, roller: MultiDieRoller) => () => number {
-        const commands = str.split(';');
-        const mods: ((attack: number, hit: number, roller: MultiDieRoller) => number)[] = [];
-        commands.forEach((command) => {
-            mods.push(this.createCommand(command))
-        });
-
-        return (attack, hit, roller) => {
-            return () => {
-                let total = 0;
-                for (let i = 0; i < mods.length; i++) {
-                    total += mods[i](attack, hit, roller);
-                    if (total > 0) {
-                        return total;
-                    }
+    processMod(mod: string, attack: number, hit: number, isCrit: boolean): number {
+        const commandList = mod.split(';');
+        for (let i = 0; i < commandList.length; i++) {
+            const command = commandList[i];
+            const components = command.split(':');
+            let comparisonValue = 0;
+            if (components.length < 1) {
+                break;
+            }
+            if (components[0].includes('hit')) {
+                comparisonValue = hit;
+            } else if (components[0].includes('attack')) {
+                comparisonValue = attack;
+            }
+            if (this.modConditionIsTrue(command, comparisonValue)) {
+                if (components.length < 2) {
+                    return 0;
                 }
-                return total;
+                return this.dieRoller.rollDieString(components[1]);
             }
         }
+        return 0;
     }
 
-    static createCommand(str: string): ((attack: number, hit: number, roller: MultiDieRoller) => number) {
-        const components = str.split(':');
-        if (components.length < 2) {
-            return (attack, hit, roller) => { return 0 }
+    modConditionIsTrue(mod: string, compValue: number): boolean {
+        if (mod.includes('< ')) {
+            const value = parseInt(mod.split('<')[1]);
+            return compValue < value;
+        } else if(mod.includes('<= ')) {
+            const value = parseInt(mod.split('<=')[1]);
+            return compValue <= value;
+        } else if(mod.includes('= ')) {
+            const value = parseInt(mod.split('=')[1]);
+            return compValue == value;
+        } else if(mod.includes('>= ')) {
+            const value = parseInt(mod.split('>=')[1]);
+            return compValue >= value;
+        } else if(mod.includes('> ')) {
+            const value = parseInt(mod.split('>')[1]);
+            return compValue > value;
         }
-        const check = components[0];
-        const damage = components[1];
-
-        if (check.includes('attack')) {
-            if (check.includes('< ')) {
-                const value = parseInt(check.split('<')[1]);
-                return (attack, hit, roller) => { return attack < value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('<= ')) {
-                const value = parseInt(check.split('<=')[1]);
-                return (attack, hit, roller) => { return attack <= value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('= ')) {
-                const value = parseInt(check.split('=')[1]);
-                return (attack, hit, roller) => { return attack == value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('>= ')) {
-                const value = parseInt(check.split('>=')[1]);
-                return (attack, hit, roller) => { return attack >= value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('> ')) {
-                const value = parseInt(check.split('>')[1]);
-                return (attack, hit, roller) => { return attack > value ? roller.rollDieString(damage) : 0 }
-            }
-
-        } else if (check.includes('hit')) {
-            if (check.includes('< ')) {
-                const value = parseInt(check.split('<')[1]);
-                return (attack, hit, roller) => { return hit < value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('<= ')) {
-                const value = parseInt(check.split('<=')[1]);
-                return (attack, hit, roller) => { return hit <= value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('= ')) {
-                const value = parseInt(check.split('=')[1]);
-                return (attack, hit, roller) => { return hit == value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('>= ')) {
-                const value = parseInt(check.split('>=')[1]);
-                return (attack, hit, roller) => { return hit >= value ? roller.rollDieString(damage) : 0 }
-            } else if(check.includes('> ')) {
-                const value = parseInt(check.split('>')[1]);
-                return (attack, hit, roller) => { return hit > value ? roller.rollDieString(damage) : 0 }
-            }
-        }
-        return (attack, hit, roller) => { return 0 }
-    }
+        return false
+}
 
     resolveFullAttack(targetAc: number, attackBonuses: string, critThreshold: number, critBonusDamage: string, 
-                      damage: string, dr: number, damageMod: ((attack: number, hit: number, roller: MultiDieRoller) => () => number) | null = null): FullAttackResult {
+                      damage: string, dr: number, damageMod: string): FullAttackResult {
         const result = new FullAttackResult();
         const attacks = this.getAttacksFromString(attackBonuses);
+        let resolvedAttacks = 0;
+        let hits = 0;
         attacks.forEach(attack => {
-            let attackMod: (() => number) | null = null;
-            if (damageMod) {
-                attackMod = damageMod(result.totalAttacks + 1, result.totalHits + 1, this.dieRoller)
-            }
-            const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critBonusDamage, damage, dr, attackMod)
+            const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critBonusDamage, damage, 
+                dr, resolvedAttacks, hits, damageMod);
             result.addResult(attackResult);
+            resolvedAttacks++;
+            if (attackResult.isHit) {
+                hits++;
+            }
         });
         return result;
     }
 
     resolveSingleAttack(targetAc: number, bonusToHit: number, critThreshold: number, critBonusDamage: string, 
-                        damage: string, dr: number, damageMod: (() => number) | null = null): SingleAttackResult {
+                        damage: string, dr: number, resolvedAttacks: number, hits: number, damageMod: string): SingleAttackResult {
         const naturalRoll = this.dieRoller.rollDieString('1d20');
         Logger.log('naturalRoll: ' + naturalRoll);
         if (naturalRoll == 1) {
@@ -120,9 +99,6 @@ export default class AttackResolver {
         if (isHit) {
             const critThreat = naturalRoll >= critThreshold;
             baseDamage = this.dieRoller.rollDieString(damage);
-            if (damageMod) {
-                modDamage = damageMod();
-            }
             if (critThreat) {
                 Logger.log('critical threat');
                 const confirmRoll = this.dieRoller.rollDieString('1d20');
@@ -135,6 +111,7 @@ export default class AttackResolver {
                     critDamage = this.dieRoller.rollDieString(critBonusDamage)
                 }
             }
+            modDamage = this.processMod(damageMod, resolvedAttacks + 1, hits + 1, isCrit);
         }
         Logger.log('Base Damage: ' + baseDamage);
         Logger.log('Mod Damage: ' + modDamage);

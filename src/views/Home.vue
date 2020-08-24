@@ -47,17 +47,14 @@ export default defineComponent({
       resultSet.colors = ['#42b0db','#00d300']
       resultSet.reset();
 
-      const mod = AttackResolver.createModFromString(attackSettings.mods);
-      const compMod = AttackResolver.createModFromString(compAttackSettings.mods);
-
       const baseResolver = new AttackResolver();
       for (let i = parseInt(simSettings.acMin); i <= parseInt(simSettings.acMax); i++) {
         for (let iteration = 0; iteration < parseInt(simSettings.iterations); iteration++) {
           const index = i - parseInt(simSettings.acMin)
           resultSet.addResult(index, 0, baseResolver.resolveFullAttack(i, attackSettings.attacks, parseInt(attackSettings.critThreshold), 
-          attackSettings.critBonusDamage, attackSettings.damage, parseInt(attackSettings.damageReduction), mod))
+          attackSettings.critBonusDamage, attackSettings.damage, parseInt(attackSettings.damageReduction), attackSettings.mods))
           resultSet.addResult(index, 1, baseResolver.resolveFullAttack(i, compAttackSettings.attacks, parseInt(compAttackSettings.critThreshold), 
-          compAttackSettings.critBonusDamage, compAttackSettings.damage, parseInt(compAttackSettings.damageReduction), compMod))
+          compAttackSettings.critBonusDamage, compAttackSettings.damage, parseInt(compAttackSettings.damageReduction), compAttackSettings.mods))
         
         }
       }
