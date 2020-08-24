@@ -33,6 +33,14 @@ export default class AttackResolver {
                 comparisonValue = attack;
             }
             if (this.modConditionIsTrue(command, comparisonValue)) {
+                Logger.log('processMod(mod: ' + mod + ', attack: ' + attack + ', hit: ' + hit + ', isCrit: ' + isCrit + ')')
+                Logger.log('components: ' + JSON.stringify(components));
+                if (isCrit) {
+                    if (components.length < 3) {
+                        return 0;
+                    }
+                    return this.dieRoller.rollDieString(components[2]);
+                }
                 if (components.length < 2) {
                     return 0;
                 }

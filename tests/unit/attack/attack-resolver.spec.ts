@@ -219,5 +219,21 @@ describe('attack-resolver.ts', () => {
         expect(actualValue.totalAttacks).to.equal(4);
         expect(actualValue.totalHits).to.equal(2);
         expect(actualValue.totalCrits).to.equal(0);
+    }),
+    it('mod crit', () => {
+        const mockDieRoller = new MockMultiDieRoller();
+        const testObject = new AttackResolver(mockDieRoller);
+        mockDieRoller.rollDieStringReturnValues.set('1d20', [20, 4, 4, 4]);
+        mockDieRoller.rollDieStringReturnValues.set('1d6', [1, 1, 1, 1, 1]);
+        mockDieRoller.rollDieStringReturnValues.set('2d6', [2, 2]);
+        mockDieRoller.rollDieStringReturnValues.set('4d6', [4, 4, 4]);
+
+        const actualValue = testObject.resolveFullAttack(10, '+6', 20, '2', '1d6', 0, 'hit = 1:1d6:2d6')
+
+        expect(actualValue.totalDamage).to.equal(3);
+        expect(actualValue.totalBaseDamage).to.equal(1);
+        expect(actualValue.totalAttacks).to.equal(1);
+        expect(actualValue.totalHits).to.equal(1);
+        expect(actualValue.totalCrits).to.equal(1);
     })
 })
