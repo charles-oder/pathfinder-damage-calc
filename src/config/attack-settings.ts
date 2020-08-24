@@ -7,7 +7,7 @@ export default class AttackSettings {
     attacks = '';
     damage = '';
     critThreshold = '';
-    critMultiplier = '';
+    critBonusDamage = '';
     mods = '';
 
     constructor() {
@@ -15,7 +15,7 @@ export default class AttackSettings {
         this.attacks = storage.attacks;
         this.damage = storage.damage;
         this.critThreshold = storage.critThreshold;
-        this.critMultiplier = storage.critMultiplier;
+        this.critBonusDamage = storage.critBonusDamage;
         this.mods = storage.mods;
     }
 
@@ -24,7 +24,7 @@ export default class AttackSettings {
         storage.attacks = this.attacks;
         storage.damage = this.damage;
         storage.critThreshold = this.critThreshold;
-        storage.critMultiplier = this.critMultiplier;
+        storage.critBonusDamage = this.critBonusDamage;
         storage.mods = this.mods;
 
     }

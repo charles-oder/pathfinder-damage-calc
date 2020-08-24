@@ -84,16 +84,16 @@ export default class AppStorage {
         localStorage['critThreshold'] = newValue
     }
 
-    get critMultiplier(): string {
-        const value: string | undefined = localStorage['critMultiplier']
+    get critBonusDamage(): string {
+        const value: string | undefined = localStorage['critBonusDamage']
         if (value) {
             return value;
         }
-        return '2';
+        return '1d6';
     }
 
-    set critMultiplier(newValue: string) {
-        localStorage['critMultiplier'] = newValue
+    set critBonusDamage(newValue: string) {
+        localStorage['critBonusDamage'] = newValue
     }
 
     get jabbingStyle(): boolean {

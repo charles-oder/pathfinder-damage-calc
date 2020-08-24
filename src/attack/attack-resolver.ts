@@ -86,7 +86,7 @@ export default class AttackResolver {
         return (attack, hit, roller) => { return 0 }
     }
 
-    resolveFullAttack(targetAc: number, attackBonuses: string, critThreshold: number, critMult: number, 
+    resolveFullAttack(targetAc: number, attackBonuses: string, critThreshold: number, critBonusDamage: string, 
                       damage: string, damageMod: ((attack: number, hit: number, roller: MultiDieRoller) => () => number) | null = null): FullAttackResult {
         const result = new FullAttackResult();
         const attacks = this.getAttacksFromString(attackBonuses);
@@ -95,13 +95,13 @@ export default class AttackResolver {
             if (damageMod) {
                 attackMod = damageMod(result.totalAttacks + 1, result.totalHits + 1, this.dieRoller)
             }
-            const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critMult, damage, attackMod)
+            const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critBonusDamage, damage, attackMod)
             result.addResult(attackResult);
         });
         return result;
     }
 
-    resolveSingleAttack(targetAc: number, bonusToHit: number, critThreshold: number, critMult: number, 
+    resolveSingleAttack(targetAc: number, bonusToHit: number, critThreshold: number, critBonusDamage: string, 
                         damage: string, damageMod: (() => number) | null = null): SingleAttackResult {
         const naturalRoll = this.dieRoller.rollDieString('1d20');
         Logger.log('naturalRoll: ' + naturalRoll);
@@ -124,13 +124,15 @@ export default class AttackResolver {
             if (critThreat) {
                 Logger.log('critical threat');
                 const confirmRoll = this.dieRoller.rollDieString('1d20');
-                Logger.log('confirm roll' + confirmRoll);
+                Logger.log('confirm roll: ' + confirmRoll);
                 const modifiedConfirm = confirmRoll + bonusToHit;
-                Logger.log('confirm roll' + confirmRoll);
+                Logger.log('modifiedConfirm roll: ' + modifiedConfirm);
                 const isCrit = modifiedConfirm >= targetAc;
                 Logger.log('isCrit: ' + isCrit);
+                const critDamage = this.dieRoller.rollDieString(critBonusDamage);
+                Logger.log('critDamage(' + critBonusDamage + '): ' + critDamage);
                 if (isCrit) {
-                    return new SingleAttackResult(targetAc, isHit, isCrit, baseDamage, baseDamage * critMult);
+                    return new SingleAttackResult(targetAc, isHit, isCrit, baseDamage, baseDamage + critDamage);
                 }
             }
             return new SingleAttackResult(targetAc, isHit, false, baseDamage, baseDamage);

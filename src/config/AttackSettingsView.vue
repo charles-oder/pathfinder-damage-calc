@@ -2,7 +2,7 @@
     <div class="attack-settings-view">
         <div class="sim-settings-header" v-bind:style="{background: attackSettings.color}">{{attackSettings.name}}</div>
         <div>Attacks<input v-model="attackSettings.attacks"/> <TooltipView :text="attacksTooltip"/> Damage<input v-model="attackSettings.damage"/> <TooltipView :text="damageToolitp"/></div>
-        <div>Crit Threshold:<input style="width: 2em;" v-model="attackSettings.critThreshold"/> <TooltipView :text="critThresholdTooltip"/> Crit Multiplier<input style="width: 1em;" v-model="attackSettings.critMultiplier"/> <TooltipView :text="critMultiplierTooltip"/></div>
+        <div>Crit Threshold:<input style="width: 2em;" v-model="attackSettings.critThreshold"/> <TooltipView :text="critThresholdTooltip"/> Crit Bonus Damage<input v-model="attackSettings.critBonusDamage"/> <TooltipView :text="critDamageBonusTooltip"/></div>
         <div>Mods:<input v-model="attackSettings.mods"/> <TooltipView :text="modsTooltip"/></div>
     </div>
 </template>
@@ -28,7 +28,7 @@ export default defineComponent({
         const attacksTooltip = 'Attacks to make each round. Format:\n+15/+10/+5';
         const damageToolitp = 'Damage per attack.  Format:\n1d8+2d6';
         const critThresholdTooltip = 'The natural die roll for a critical threat';
-        const critMultiplierTooltip = 'The damage multiplier for critical hits';
+        const critDamageBonusTooltip = 'The bonus damage for critical hits.  Format:\n1d8+2d6';
         const modsTooltip = 'Conditional modifications to damage based on attack or'
         + ' hit sequence.  Can be based on the number of the attack in sequence, or' 
         + ' the number of the hit in sequence. Multiple conditions must be separated' 
@@ -41,7 +41,7 @@ export default defineComponent({
             attacksTooltip,
             damageToolitp,
             critThresholdTooltip,
-            critMultiplierTooltip,
+            critDamageBonusTooltip,
             modsTooltip
         }
     },

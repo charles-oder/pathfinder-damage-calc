@@ -1,4 +1,5 @@
 import MultiDieRoller from '@/dice/multi-die-roller';
+import Logger from '@/logging/logger';
 
 export default class MockMultiDieRoller extends MultiDieRoller {
     
@@ -6,8 +7,10 @@ export default class MockMultiDieRoller extends MultiDieRoller {
     rollDieStringArguments = new Array<string>();
 
     rollDieString(dieString: string): number {
+        Logger.log('[MOCK] Rolling ' + dieString);
         this.rollDieStringArguments.push(dieString);
         const value = this.rollDieStringReturnValues.get(dieString)?.shift();
+        Logger.log('[MOCK] Result ' + value);
         if (value) {
             return value;
         }

@@ -93,6 +93,8 @@ export default defineComponent({
                 + '\n Average Hits per Round: ' + averageHits(results)
                 + '\n Total Crits: ' + results.totalCrits
                 + '\n Crit Rate: ' + critRate(results)
+                + '\n Base Damage: ' + results.totalBaseDamage
+                + '\n Crit Damage: ' + (results.totalDamage - results.totalBaseDamage)
                 + '\n Total Damage: ' + results.totalDamage
                 + '\n Damage per Round: ' + damagePerRound
             if (barIndex > 0) {

@@ -43,6 +43,7 @@ export default defineComponent({
 
     const caclulateClicked = function() {
       simSettings.save();
+      debugger
       attackSettings.save();
       resultSet.colors = ['#42b0db','#00d300']
       resultSet.reset();
@@ -55,9 +56,9 @@ export default defineComponent({
         for (let iteration = 0; iteration < parseInt(simSettings.iterations); iteration++) {
           const index = i - parseInt(simSettings.acMin)
           resultSet.addResult(index, 0, baseResolver.resolveFullAttack(i, attackSettings.attacks, parseInt(attackSettings.critThreshold), 
-          parseInt(attackSettings.critMultiplier), attackSettings.damage, mod))
+          attackSettings.critBonusDamage, attackSettings.damage, mod))
           resultSet.addResult(index, 1, baseResolver.resolveFullAttack(i, compAttackSettings.attacks, parseInt(compAttackSettings.critThreshold), 
-          parseInt(compAttackSettings.critMultiplier), compAttackSettings.damage, compMod))
+          compAttackSettings.critBonusDamage, compAttackSettings.damage, compMod))
         
         }
       }
