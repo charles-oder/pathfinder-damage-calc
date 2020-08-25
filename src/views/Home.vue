@@ -5,7 +5,9 @@
       <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
       <button class="calc-button" v-on:click="caclulateClicked()">{{buttonTitle}}</button>
     </div>
-    <AttackResultsView :results="resultSet"/>
+    <div class="results">
+      <AttackResultsView :results="resultSet"/>
+    </div>
   </div>
 </template>
 
@@ -155,64 +157,31 @@ class Job {
 </script>
 
 <style scoped lang="scss">
+.home {
+  width: 100%;
+  margin: 0;
+}
 .settings {
   position: relative;
-  display: block;
-  margin: 1em 5%;
+  display: inline-block;
+  width: 90%;
+  margin: 0 auto 15px auto;
 }
 .calc-button {
   width: 100%;
   height: 40px;
-  display: block;
+  display: inline-block;
+  margin: auto;
 }
 .settings-container {
-  float: left;
-  width: 30%;
-}
-.results-container {
   display: inline-block;
-  position: relative;
   width: 100%;
+  margin: auto;
 }
-.results-line-item {
-  text-align: start;
-}
-.results-meter-bar {
-  position: absolute;
-  top: 0;
-  height: 100%;
-}
-.base {
-  background-color: rgb(66, 176, 219);
-}
-.comp {
-  background-color: rgb(0, 211, 0);
-}
-.results-data {
-  position: relative;
-  z-index: 1;
-}
-.results-container {
-  position: relative;
-}
-
-@media only screen and (max-width: 1120px) {
-  .settings-container {
-    width: 45%;
-    margin: 0 1%;
-  }
-  body {
-    background-color: lightblue;
-  }
-}
-@media only screen and (max-width: 850px) {
-  .settings-container {
-    width: 90%;
-    margin: 0 5%;
-  }
-  body {
-    background-color: lightblue;
-  }
+.results {
+  display: inline-block;
+  width: 90%;
+  margin: auto;
 }
 
 </style>

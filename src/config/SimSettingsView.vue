@@ -1,21 +1,21 @@
 <template>
     <div class="sim-settings-view">
         <div class="sim-settings-header">SCOPE</div>
-        <div class="row">Iterations:<input v-model="simSettings.iterations"/> <TooltipView :text="iterationTooltip"/></div>
-        <div class="row">Target AC <TooltipView :text="targetAcTooltip"/> min<input style="width: 2em;" v-model="simSettings.acMin"/>
-          max<input style="width: 2em;" v-model="simSettings.acMax"/></div>
+        <div class="row">Iterations:<TooltipField fieldWidth="5em" v-model:value="simSettings.iterations" :tooltip="iterationTooltip"/></div>
+        <div class="row">Target AC min:<TooltipField fieldWidth="2em" v-model:value="simSettings.acMin" :tooltip="targetAcMinTooltip"/>
+          max:<TooltipField fieldWidth="2em" v-model:value="simSettings.acMax" :tooltip="targetAcMaxTooltip"/></div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import SimSettings from '@/config/sim-settings';
-import TooltipView from '@/TooltipView.vue';
+import TooltipField from '@/TooltipField.vue';
 
 export default defineComponent({
     name: 'SimSettingsView',
     components: {
-        TooltipView
+        TooltipField
     },
     props: {
         settings: SimSettings
@@ -23,14 +23,16 @@ export default defineComponent({
     setup(props, { emit }) {
         const simSettings = computed({
             get: () => props.settings,
-            set: (value) => emit('input', value)
+            set: (value) => emit('update:settings', value)
         });
         const iterationTooltip = 'The number of times to run each sim.  Higher numbers yeild more consistent results, but can take some time to run.'
-        const targetAcTooltip = 'The range of target armor classes to run the sim against';
+        const targetAcMinTooltip = 'The lowest target armor classes to run the sim against';
+        const targetAcMaxTooltip = 'The highest target armor classes to run the sim against';
         return {
             simSettings,
             iterationTooltip,
-            targetAcTooltip
+            targetAcMinTooltip,
+            targetAcMaxTooltip
         }
     },
   

@@ -1,26 +1,26 @@
 <template>
     <div class="attack-settings-view">
         <div class="sim-settings-header" v-bind:style="{background: attackSettings.color}">{{attackSettings.name}}</div>
-        <div class="row">Attacks:<input v-model="attackSettings.attacks"/> <TooltipView :text="attacksTooltip"/></div>
-        <div class="row">Damage:<input v-model="attackSettings.damage"/> <TooltipView :text="damageToolitp"/></div>
-        <div class="row">Attack Bonus:<input style="width: 2em;" v-model="attackSettings.attackBonus"/> <TooltipView :text="attackBonusTooltip"/></div>
-        <div class="row">Crit Threshold:<input style="width: 2em;" v-model="attackSettings.critThreshold"/> <TooltipView :text="critThresholdTooltip"/></div>
-        <div class="row">Crit Confirm Bonus:<input style="width: 2em;" v-model="attackSettings.critConfirmBonus"/> <TooltipView :text="critConfirmTooltip"/></div>
-        <div class="row">Crit Bonus Damage:<input v-model="attackSettings.critBonusDamage"/> <TooltipView :text="critDamageBonusTooltip"/></div>
-        <div class="row">DR:<input style="width: 2em;" v-model="attackSettings.damageReduction"/> <TooltipView :text="damageReductionTooltip"/></div>
-        <div class="row">Mods:<input v-model="attackSettings.mods"/> <TooltipView :text="modsTooltip"/></div>
+        <div class="row">Attacks:<TooltipField fieldWidth="15em" v-model:value="attackSettings.attacks" :tooltip="attacksTooltip"/></div>
+        <div class="row">Damage:<TooltipField v-model:value="attackSettings.damage" :tooltip="damageToolitp"/></div>
+        <div class="row">Attack Bonus:<TooltipField fieldWidth="2em" v-model:value="attackSettings.attackBonus" :tooltip="attackBonusTooltip"/></div>
+        <div class="row">Crit Threshold:<TooltipField fieldWidth="2em"  v-model:value="attackSettings.critThreshold" :tooltip="critThresholdTooltip"/></div>
+        <div class="row">Crit Confirm Bonus:<TooltipField fieldWidth="2em" v-model:value="attackSettings.critConfirmBonus" :tooltip="critConfirmTooltip"/></div>
+        <div class="row">Crit Bonus Damage:<TooltipField v-model:value="attackSettings.critBonusDamage" :tooltip="critDamageBonusTooltip"/></div>
+        <div class="row">DR:<TooltipField fieldWidth="2em" v-model:value="attackSettings.damageReduction" :tooltip="damageReductionTooltip"/></div>
+        <div class="row">Mods:<TooltipField fieldWidth="15em" v-model:value="attackSettings.mods" :tooltip="modsTooltip"/></div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import AttackSettings from '@/config/attack-settings'
-import TooltipView from '@/TooltipView.vue';
+import TooltipField from '@/TooltipField.vue';
 
 export default defineComponent({
     name: 'AttackSettingsView',
     components: {
-        TooltipView
+        TooltipField
     },
     props: {
         settings: AttackSettings
@@ -28,7 +28,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const attackSettings = computed({
             get: () => props.settings,
-            set: (value) => emit('input', value)
+            set: (value) => emit('update:settings', value)
         });
         const attacksTooltip = 'Attacks to make each round. Format:\n+15/+10/+5';
         const attackBonusTooltip = 'Additional bonus to hit.';
