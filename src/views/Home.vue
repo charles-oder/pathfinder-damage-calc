@@ -47,14 +47,13 @@ export default defineComponent({
       resultSet.colors = ['#42b0db','#00d300']
       resultSet.reset();
 
-      const baseResolver = new AttackResolver();
+      const baseResolver = new AttackResolver(attackSettings);
+      const compResolver = new AttackResolver(compAttackSettings);
       for (let i = parseInt(simSettings.acMin); i <= parseInt(simSettings.acMax); i++) {
         for (let iteration = 0; iteration < parseInt(simSettings.iterations); iteration++) {
           const index = i - parseInt(simSettings.acMin)
-          resultSet.addResult(index, 0, baseResolver.resolveFullAttack(i, attackSettings.attacks, parseInt(attackSettings.critThreshold), 
-          attackSettings.critBonusDamage, attackSettings.damage, parseInt(attackSettings.damageReduction), attackSettings.mods))
-          resultSet.addResult(index, 1, baseResolver.resolveFullAttack(i, compAttackSettings.attacks, parseInt(compAttackSettings.critThreshold), 
-          compAttackSettings.critBonusDamage, compAttackSettings.damage, parseInt(compAttackSettings.damageReduction), compAttackSettings.mods))
+          resultSet.addResult(index, 0, baseResolver.resolveFullAttack(i))
+          resultSet.addResult(index, 1, compResolver.resolveFullAttack(i))
         
         }
       }
@@ -78,6 +77,7 @@ export default defineComponent({
   },
   
 });
+
 </script>
 
 <style scoped lang="scss">

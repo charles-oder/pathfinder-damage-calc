@@ -1,12 +1,15 @@
 import MultiDieRoller from '@/dice/multi-die-roller';
 import Logger from '@/logging/logger';
 import { SingleAttackResult, FullAttackResult } from './attack-result';
+import AttackSettings from '@/config/attack-settings';
 
 export default class AttackResolver {
 
     private dieRoller: MultiDieRoller;
+    private settings: AttackSettings;
 
-    constructor(dieRoller: MultiDieRoller = new MultiDieRoller()) {
+    constructor(settings: AttackSettings, dieRoller: MultiDieRoller = new MultiDieRoller()) {
+        this.settings = settings;
         this.dieRoller = dieRoller;
     }
 
@@ -70,15 +73,14 @@ export default class AttackResolver {
         return false
 }
 
-    resolveFullAttack(targetAc: number, attackBonuses: string, critThreshold: number, critBonusDamage: string, 
-                      damage: string, dr: number, damageMod: string): FullAttackResult {
+    resolveFullAttack(targetAc: number): FullAttackResult {
+        const attackBonuses = this.settings.attacks;
         const result = new FullAttackResult();
         const attacks = this.getAttacksFromString(attackBonuses);
         let resolvedAttacks = 0;
         let hits = 0;
         attacks.forEach(attack => {
-            const attackResult = this.resolveSingleAttack(targetAc, attack, critThreshold, critBonusDamage, damage, 
-                dr, resolvedAttacks, hits, damageMod);
+            const attackResult = this.resolveSingleAttack(targetAc, attack + 1, resolvedAttacks + 1, hits + 1);
             result.addResult(attackResult);
             resolvedAttacks++;
             if (attackResult.isHit) {
@@ -88,9 +90,15 @@ export default class AttackResolver {
         return result;
     }
 
-    resolveSingleAttack(targetAc: number, bonusToHit: number, critThreshold: number, critBonusDamage: string, 
-                        damage: string, dr: number, resolvedAttacks: number, hits: number, damageMod: string): SingleAttackResult {
+    resolveSingleAttack(targetAc: number, bonusToHit: number, attack = 0, hit = 0): SingleAttackResult {
+        Logger.log('attack: ' + attack);
+        Logger.log('hit: ' + hit);
         const naturalRoll = this.dieRoller.rollDieString('1d20');
+        const critThreshold = this.settings.critThreshold;
+        const critBonusDamage = this.settings.critBonusDamage;
+        const damage = this.settings.damage;
+        const dr = this.settings.damageReduction;
+        const damageMod = this.settings.mods;
         Logger.log('naturalRoll: ' + naturalRoll);
         if (naturalRoll == 1) {
             return new SingleAttackResult(targetAc, false, false, 0, 0, 0, 0);
@@ -105,7 +113,7 @@ export default class AttackResolver {
 
         Logger.log('isHit: ' + isHit);
         if (isHit) {
-            const critThreat = naturalRoll >= critThreshold;
+            const critThreat = naturalRoll >= parseInt(critThreshold);
             baseDamage = this.dieRoller.rollDieString(damage);
             if (critThreat) {
                 Logger.log('critical threat');
@@ -119,12 +127,12 @@ export default class AttackResolver {
                     critDamage = this.dieRoller.rollDieString(critBonusDamage)
                 }
             }
-            modDamage = this.processMod(damageMod, resolvedAttacks + 1, hits + 1, isCrit);
+            modDamage = this.processMod(damageMod, attack, hit, isCrit);
         }
         Logger.log('Base Damage: ' + baseDamage);
         Logger.log('Mod Damage: ' + modDamage);
         Logger.log('Crit Damage: ' + critDamage);
-        const totalDamage = Math.max(baseDamage + modDamage + critDamage - dr, 0);
+        const totalDamage = Math.max(baseDamage + modDamage + critDamage - parseInt(this.settings.damageReduction), 0);
         Logger.log('totalDamage: ' + totalDamage);
         return new SingleAttackResult(targetAc, isHit, isCrit, baseDamage, modDamage, critDamage, totalDamage);
     }
