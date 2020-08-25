@@ -4,9 +4,9 @@
       <AttackSettingsView class="settings-container" v-model:settings="attackSettings"/>
       <AttackSettingsView class="settings-container" v-model:settings="compAttackSettings"/>
       <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
-      <button class="calc-button" v-on:click="caclulateClicked()">Calculate</button>
+      <button class="calc-button" v-on:click="caclulateClicked()">{{buttonTitle}}</button>
     </div>
-    <AttackResultsView :results="resultSet" :simSettings="simSettings"/>
+    <AttackResultsView :results="resultSet"/>
   </div>
 </template>
 
@@ -40,23 +40,66 @@ export default defineComponent({
     const compAttackSettings = reactive(new AttackSettings());
     const results = reactive(new FullAttackResultSet());
     const resultSet = reactive(new FullAttackResultSet());
+    const buttonTitle = ref('Calculate');
+    let baseResolver = new AttackResolver(attackSettings);
+    let compResolver = new AttackResolver(compAttackSettings);
+    let running = false;
+
+    function killTimeouts() {
+        const highestTimeoutId = setTimeout(";");
+        for (let id = 0 ; id < highestTimeoutId ; id++) {
+            clearTimeout(id); 
+        }
+    }
+
+    function runJob(ac: number, iteration: number) {
+      const totalIterations = parseInt(simSettings.iterations)
+      if (iteration >= totalIterations) {
+        ac++;
+        iteration = 0;
+      }
+      if (ac > parseInt(simSettings.acMax)) {
+        buttonTitle.value = 'Calculate'
+        running = false;
+        return;
+      }
+      const index = ac - parseInt(simSettings.acMin)
+      const base = baseResolver.resolveFullAttack(ac);
+      const comp = compResolver.resolveFullAttack(ac)
+      buttonTitle.value = 'Calculating (AC: ' + ac + ', iteration: ' + iteration + ')... Click to cancel';
+      setTimeout(() => {
+        const batchSize = Math.max(Math.min(totalIterations / 100, 1000), 1);
+
+        for (let i = 0; i < batchSize; i++) {
+
+          resultSet.addResult(index, 0, base);
+          resultSet.addResult(index, 1, comp)
+
+        }
+        runJob(ac, iteration + batchSize);
+      }, 0)
+
+    }
 
     const caclulateClicked = function() {
+
+      if (running) {
+        running = false;
+        killTimeouts();
+        buttonTitle.value = 'Calculate';
+        return;
+      }
+      running = true;
       simSettings.save();
       attackSettings.save();
       resultSet.colors = ['#42b0db','#00d300']
       resultSet.reset();
 
-      const baseResolver = new AttackResolver(attackSettings);
-      const compResolver = new AttackResolver(compAttackSettings);
-      for (let i = parseInt(simSettings.acMin); i <= parseInt(simSettings.acMax); i++) {
-        for (let iteration = 0; iteration < parseInt(simSettings.iterations); iteration++) {
-          const index = i - parseInt(simSettings.acMin)
-          resultSet.addResult(index, 0, baseResolver.resolveFullAttack(i))
-          resultSet.addResult(index, 1, compResolver.resolveFullAttack(i))
-        
-        }
-      }
+      baseResolver = new AttackResolver(attackSettings);
+      compResolver = new AttackResolver(compAttackSettings);
+      buttonTitle.value = 'Starting run...'
+
+      runJob(parseInt(simSettings.acMin), 0);
     }
     onMounted(() => {
       attackSettings.color = '#42b0db'
@@ -72,11 +115,23 @@ export default defineComponent({
       attackSettings,
       compAttackSettings,
       results,
-      resultSet
+      resultSet,
+      buttonTitle
     }
   },
   
 });
+
+class Job {
+  index: number
+  base: FullAttackResult 
+  comp: FullAttackResult
+  constructor(index: number, base: FullAttackResult, comp: FullAttackResult) {
+    this.index = index;
+    this.base = base;
+    this.comp = comp;
+  }
+}
 
 </script>
 

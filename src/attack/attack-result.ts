@@ -21,6 +21,7 @@ export class SingleAttackResult {
 
 export class FullAttackResult {
 
+    rounds = 1;
     targetAc = 0;
     totalAttacks = 0;
     totalHits = 0;
@@ -42,6 +43,7 @@ export class FullAttackResult {
     }
 
     merge(results: FullAttackResult) {
+        this.rounds += results.rounds;
         this.targetAc = results.targetAc;
         this.totalAttacks += results.totalAttacks;
         this.totalHits += results.totalHits;
