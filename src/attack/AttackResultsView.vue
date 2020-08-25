@@ -116,6 +116,7 @@ export default defineComponent({
 }
 .results-line-item {
   text-align: start;
+  width: 90%;
 }
 .results-meter-bar {
   position: absolute;
@@ -137,7 +138,6 @@ export default defineComponent({
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 300px;
-  max-width: 50vw;
   background-color: black;
   color: #fff;
   text-align: center;

@@ -10,7 +10,7 @@
 
 <style lang="scss">
 body {
-  width: 100vw;
+  width: calc(100vw - 20px);
   margin: 0;
 }
 #app {
