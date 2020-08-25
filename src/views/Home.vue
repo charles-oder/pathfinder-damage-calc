@@ -96,7 +96,7 @@ export default defineComponent({
 
     }
 
-    const caclulateClicked = function() {
+    function caclulateClicked() {
       startTimer()
       if (running) {
         running = false;
