@@ -3,7 +3,9 @@
         <div class="sim-settings-header" v-bind:style="{background: attackSettings.color}">{{attackSettings.name}}</div>
         <div class="row">Attacks:<input v-model="attackSettings.attacks"/> <TooltipView :text="attacksTooltip"/></div>
         <div class="row">Damage:<input v-model="attackSettings.damage"/> <TooltipView :text="damageToolitp"/></div>
+        <div class="row">Attack Bonus:<input style="width: 2em;" v-model="attackSettings.attackBonus"/> <TooltipView :text="critThresholdTooltip"/></div>
         <div class="row">Crit Threshold:<input style="width: 2em;" v-model="attackSettings.critThreshold"/> <TooltipView :text="critThresholdTooltip"/></div>
+        <div class="row">Crit Confirm Bonus:<input style="width: 2em;" v-model="attackSettings.critConfirmBonus"/> <TooltipView :text="critThresholdTooltip"/></div>
         <div class="row">Crit Bonus Damage:<input v-model="attackSettings.critBonusDamage"/> <TooltipView :text="critDamageBonusTooltip"/></div>
         <div class="row">DR:<input style="width: 2em;" v-model="attackSettings.damageReduction"/> <TooltipView :text="damageReductionTooltip"/></div>
         <div class="row">Mods:<input v-model="attackSettings.mods"/> <TooltipView :text="modsTooltip"/></div>

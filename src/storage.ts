@@ -60,6 +60,30 @@ export default class AppStorage {
         localStorage['attacks'] = newValue
     }
 
+    get attackBonus(): string {
+        const value: string | undefined = localStorage['attackBonus']
+        if (value) {
+            return value;
+        }
+        return '0';
+    }
+
+    set attackBonus(newValue: string) {
+        localStorage['attackBonus'] = newValue
+    }
+
+    get critConfirmBonus(): string {
+        const value: string | undefined = localStorage['critConfirmBonus']
+        if (value) {
+            return value;
+        }
+        return '0';
+    }
+
+    set critConfirmBonus(newValue: string) {
+        localStorage['critConfirmBonus'] = newValue
+    }
+
     get damageReduction(): string {
         const value: string | undefined = localStorage['damageReduction']
         if (value) {

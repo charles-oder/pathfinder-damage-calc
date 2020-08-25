@@ -10,6 +10,9 @@ export default class MockMultiDieRoller extends MultiDieRoller {
         Logger.mock('Rolling ' + dieString);
         this.rollDieStringArguments.push(dieString);
         const value = this.rollDieStringReturnValues.get(dieString)?.shift();
+        if (!value && !dieString.includes('d')) {
+            return parseInt(dieString);
+        }
         Logger.mock('Result ' + value);
         if (value) {
             return value;
