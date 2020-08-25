@@ -41,9 +41,22 @@ export default defineComponent({
     const results = reactive(new FullAttackResultSet());
     const resultSet = reactive(new FullAttackResultSet());
     const buttonTitle = ref('Calculate');
-    let baseResolver = new AttackResolver(attackSettings);
-    let compResolver = new AttackResolver(compAttackSettings);
+    let resolvers: Array<AttackResolver> = []
     let running = false;
+    let startTime = 0;
+    let lapTime = 0;
+
+    function startTimer() {
+      startTime = new Date().getTime();
+      lapTime = startTime;
+    }
+
+    function printTimer(name: string, end = false) {
+        const endTime = new Date().getTime()
+        const runningTime = ((endTime - (end ? startTime : lapTime)) / 1000).toFixed(3);
+        lapTime = endTime;
+        console.log(name + ' completed in ' + runningTime + ' seconds')
+    }
 
     function killTimeouts() {
         const highestTimeoutId = setTimeout(";");
@@ -52,37 +65,38 @@ export default defineComponent({
         }
     }
 
-    function runJob(ac: number, iteration: number) {
+    function runJob(ac: number, iteration: number, batchSize: number) {
       const totalIterations = parseInt(simSettings.iterations)
       if (iteration >= totalIterations) {
+        printTimer('AC ' + ac);
         ac++;
         iteration = 0;
       }
       if (ac > parseInt(simSettings.acMax)) {
+        const endTime = new Date().getTime()
+        const runningTime = ((endTime - startTime) / 1000).toFixed(3);
+        printTimer('Job', true);
         buttonTitle.value = 'Calculate'
         running = false;
         return;
       }
       const index = ac - parseInt(simSettings.acMin)
-      const base = baseResolver.resolveFullAttack(ac);
-      const comp = compResolver.resolveFullAttack(ac)
+
       buttonTitle.value = 'Calculating (AC: ' + ac + ', iteration: ' + iteration + ')... Click to cancel';
       setTimeout(() => {
-        const batchSize = Math.max(Math.min(totalIterations / 100, 1000), 1);
-
         for (let i = 0; i < batchSize; i++) {
-
-          resultSet.addResult(index, 0, base);
-          resultSet.addResult(index, 1, comp)
+          for (let r = 0; r < resolvers.length; r++) {
+            resultSet.addResult(index, r, resolvers[r].resolveFullAttack(ac));
+          }
 
         }
-        runJob(ac, iteration + batchSize);
+        runJob(ac, iteration + batchSize, batchSize);
       }, 0)
 
     }
 
     const caclulateClicked = function() {
-
+      startTimer()
       if (running) {
         running = false;
         killTimeouts();
@@ -95,11 +109,14 @@ export default defineComponent({
       resultSet.colors = ['#42b0db','#00d300']
       resultSet.reset();
 
-      baseResolver = new AttackResolver(attackSettings);
-      compResolver = new AttackResolver(compAttackSettings);
+      resolvers = [
+        new AttackResolver(attackSettings),
+        new AttackResolver(compAttackSettings)
+      ]
       buttonTitle.value = 'Starting run...'
-
-      runJob(parseInt(simSettings.acMin), 0);
+      const batchSize = Math.max(Math.min(parseInt(simSettings.iterations) / 100, 1000), 1);
+      console.log('Starting Run (Batch Size: ' + batchSize + ')');
+      runJob(parseInt(simSettings.acMin), 0, batchSize);
     }
     onMounted(() => {
       attackSettings.color = '#42b0db'
