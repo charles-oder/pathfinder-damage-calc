@@ -10,8 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted, watch } from 'vue';
-import SimSettings from '@/config/sim-settings'
+import { defineComponent } from 'vue';
 import { FullAttackResultSet, FullAttackResult } from '@/attack/attack-result';
 
 export default defineComponent({
@@ -29,13 +28,9 @@ export default defineComponent({
     methods: {
 
     },
-    setup(props, { emit }) {
+    setup(props) {
         function color(index: number): string | undefined {
             return props.results?.colors[index] ?? '#CCC'
-        }
-        function getMaxDamage(attackResults: Array<FullAttackResult>): number {
-            const damageList = attackResults.map((e) => { return e.totalDamage });
-            return damageList.reduce((previous, current) => { return Math.max(previous, current) }, 0)
         }
         function maxDamage(): number {
             let max = 0;
@@ -69,7 +64,7 @@ export default defineComponent({
             const ac = results.targetAc;
             const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
             const damagePerRound = (results.totalDamage / results.rounds).toFixed(1);
-            return 'AC: ' + results.targetAc
+            return 'AC: ' + ac
                 + ' H/Rnd: ' + averageHits(results)
                 + ' (' + critRate(results) + ' crit)'
                 + ' Dmg/Rnd: ' + damagePerRound

@@ -12,13 +12,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, onMounted, reactive } from 'vue';
+import { defineComponent, ref, onMounted, reactive } from 'vue';
 import SimSettingsView from '@/config/SimSettingsView.vue';
 import AttackSettingsView from '@/config/AttackSettingsView.vue';
 import AttackResultsView from '@/attack/AttackResultsView.vue'
-import { FullAttackResult, FullAttackResultSet } from '@/attack/attack-result';
+import { FullAttackResultSet } from '@/attack/attack-result';
 import AttackResolver from '@/attack/attack-resolver';
-import IterativeAttackResolver from '@/attack/iterative-attack-resolver';
 import SimSettings from '@/config/sim-settings'
 import AttackSettings from '@/config/attack-settings'
 
@@ -77,8 +76,6 @@ export default defineComponent({
         iteration = 0;
       }
       if (ac > parseInt(simSettings.acMax)) {
-        const endTime = new Date().getTime()
-        const runningTime = ((endTime - startTime) / 1000).toFixed(3);
         printTimer('Job', true);
         buttonTitle.value = 'Calculate'
         running = false;
@@ -142,17 +139,6 @@ export default defineComponent({
   },
   
 });
-
-class Job {
-  index: number
-  base: FullAttackResult 
-  comp: FullAttackResult
-  constructor(index: number, base: FullAttackResult, comp: FullAttackResult) {
-    this.index = index;
-    this.base = base;
-    this.comp = comp;
-  }
-}
 
 </script>
 

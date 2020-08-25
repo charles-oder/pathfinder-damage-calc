@@ -5,19 +5,19 @@ export default class Logger {
     static logError = 1;
     
 
-    static mock(data: any) {
+    static mock(data: string) {
         if (this.logMock) {
             console.log('MOCK: ' + data)
         }
     }
 
-    static log(data: any) {
+    static log(data: string) {
         if (this.logDebug) {
             console.log('DEBUG: ' + data)
         }
     }
 
-    static error(data: any) {
+    static error(data: string) {
         if (this.logError) {
             console.error('ERROR: ' +data)
         }

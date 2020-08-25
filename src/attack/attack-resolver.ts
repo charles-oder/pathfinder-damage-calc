@@ -2,7 +2,6 @@ import MultiDieRoller from '@/dice/multi-die-roller';
 import Logger from '@/logging/logger';
 import { SingleAttackResult, FullAttackResult } from './attack-result';
 import AttackSettings from '@/config/attack-settings';
-import { parseQuery } from 'vue-router';
 
 export default class AttackResolver {
 

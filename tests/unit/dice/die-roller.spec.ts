@@ -4,15 +4,13 @@ import DieRoller from '@/dice/die-roller'
 describe('die-roller.ts', () => {
     it('d1 always rolls 1', () => {
         const testObject = new DieRoller()
-        const expectedValue = 1;
 
         const actualValue = testObject.rollD(1);
 
-        expect(actualValue).to.equal(expectedValue);
+        expect(actualValue).to.equal(1);
     }),
     it('d6 always rolls 1-6', () => {
         const testObject = new DieRoller()
-        const expectedValue = 1;
         for (let i = 0; i < 100; i++) {
             const actualValue = testObject.rollD(6);
 
