@@ -116,7 +116,7 @@ export default defineComponent({
 }
 .results-line-item {
   text-align: start;
-  width: 90%;
+  width: 100%;
 }
 .results-meter-bar {
   position: absolute;
