@@ -1,8 +1,7 @@
 <template>
   <div class="home">
     <div class="settings">
-      <AttackSettingsView class="settings-container" v-model:settings="attackSettings"/>
-      <AttackSettingsView class="settings-container" v-model:settings="compAttackSettings"/>
+      <AttackSettingsView v-for="(settings, index) in attackSettings" v-bind:key="settings.name" class="settings-container" v-model:settings="attackSettings[index]"/>
       <SimSettingsView class="settings-container" v-model:settings="simSettings"/>
       <button class="calc-button" v-on:click="caclulateClicked()">{{buttonTitle}}</button>
     </div>
@@ -36,8 +35,11 @@ export default defineComponent({
   },
   setup() {
     const simSettings = reactive(new SimSettings());
-    const attackSettings = reactive(new AttackSettings());
-    const compAttackSettings = reactive(new AttackSettings());
+    const attackSettings = reactive([
+      new AttackSettings(),
+      new AttackSettings(),
+      new AttackSettings()
+    ]);
     const results = reactive(new FullAttackResultSet());
     const resultSet = reactive(new FullAttackResultSet());
     const buttonTitle = ref('Calculate');
@@ -105,24 +107,25 @@ export default defineComponent({
       }
       running = true;
       simSettings.save();
-      attackSettings.save();
-      resultSet.colors = ['#42b0db','#00d300']
+      attackSettings[0].save();
+      resultSet.colors = attackSettings.map((setting) => { return setting.color });
       resultSet.reset();
 
-      resolvers = [
-        new AttackResolver(attackSettings),
-        new AttackResolver(compAttackSettings)
-      ]
+      resolvers = attackSettings.map((setting) => { return new AttackResolver(setting) });
+
       buttonTitle.value = 'Starting run...'
       const batchSize = Math.max(Math.min(parseInt(simSettings.iterations) / 100, 1000), 1);
       console.log('Starting Run (Batch Size: ' + batchSize + ')');
       runJob(parseInt(simSettings.acMin), 0, batchSize);
     }
     onMounted(() => {
-      attackSettings.color = '#42b0db'
-      attackSettings.name = 'BASE'
-      compAttackSettings.color = '#00d300'
-      compAttackSettings.name = 'COMPARE'
+      attackSettings[0]
+      attackSettings[0].color = '#BBDB9B'
+      attackSettings[0].name = 'BASE'
+      attackSettings[1].color = '#ABC4A1'
+      attackSettings[1].name = 'OPTION 1'
+      attackSettings[2].color = '#9DB4AB'
+      attackSettings[2].name = 'OPTION 2'
 
     });
     
@@ -130,7 +133,6 @@ export default defineComponent({
       caclulateClicked,
       simSettings,
       attackSettings,
-      compAttackSettings,
       results,
       resultSet,
       buttonTitle
