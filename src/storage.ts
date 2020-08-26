@@ -3,9 +3,9 @@ export default class AppStorage {
     get iterations(): string {
         const value: string | undefined = localStorage['iterations']
         if (value) {
-            return value;
+            return value
         }
-        return '100';
+        return '100'
     }
 
     set iterations(newValue: string) {
@@ -15,9 +15,9 @@ export default class AppStorage {
     get mods(): string {
         const value: string | undefined = localStorage['mods']
         if (value) {
-            return value;
+            return value
         }
-        return '';
+        return ''
     }
 
     set mods(newValue: string) {
@@ -27,9 +27,9 @@ export default class AppStorage {
     get acMin(): string {
         const value: string | undefined = localStorage['acMin']
         if (value) {
-            return value;
+            return value
         }
-        return '15';
+        return '15'
     }
 
     set acMin(newValue: string) {
@@ -39,9 +39,9 @@ export default class AppStorage {
     get acMax(): string {
         const value: string | undefined = localStorage['acMax']
         if (value) {
-            return value;
+            return value
         }
-        return '40';
+        return '40'
     }
 
     set acMax(newValue: string) {
@@ -51,9 +51,9 @@ export default class AppStorage {
     get attacks(): string {
         const value: string | undefined = localStorage['attacks']
         if (value) {
-            return value;
+            return value
         }
-        return '+0';
+        return '+0'
     }
 
     set attacks(newValue: string) {
@@ -63,9 +63,9 @@ export default class AppStorage {
     get attackBonus(): string {
         const value: string | undefined = localStorage['attackBonus']
         if (value) {
-            return value;
+            return value
         }
-        return '0';
+        return '0'
     }
 
     set attackBonus(newValue: string) {
@@ -75,9 +75,9 @@ export default class AppStorage {
     get critConfirmBonus(): string {
         const value: string | undefined = localStorage['critConfirmBonus']
         if (value) {
-            return value;
+            return value
         }
-        return '0';
+        return '0'
     }
 
     set critConfirmBonus(newValue: string) {
@@ -87,9 +87,9 @@ export default class AppStorage {
     get damageReduction(): string {
         const value: string | undefined = localStorage['damageReduction']
         if (value) {
-            return value;
+            return value
         }
-        return '0';
+        return '0'
     }
 
     set damageReduction(newValue: string) {
@@ -99,9 +99,9 @@ export default class AppStorage {
     get damage(): string {
         const value: string | undefined = localStorage['damage']
         if (value) {
-            return value;
+            return value
         }
-        return '1d6';
+        return '1d6'
     }
 
     set damage(newValue: string) {
@@ -111,9 +111,9 @@ export default class AppStorage {
     get critThreshold(): string {
         const value: string | undefined = localStorage['critThreshold']
         if (value) {
-            return value;
+            return value
         }
-        return '20';
+        return '20'
     }
 
     set critThreshold(newValue: string) {
@@ -123,9 +123,9 @@ export default class AppStorage {
     get critBonusDamage(): string {
         const value: string | undefined = localStorage['critBonusDamage']
         if (value) {
-            return value;
+            return value
         }
-        return '1d6';
+        return '1d6'
     }
 
     set critBonusDamage(newValue: string) {
@@ -135,9 +135,9 @@ export default class AppStorage {
     get jabbingStyle(): boolean {
         const value: boolean | undefined = localStorage['jabbingStyle']
         if (value) {
-            return value;
+            return value
         }
-        return false;
+        return false
     }
 
     set jabbingStyle(newValue: boolean) {
@@ -147,9 +147,9 @@ export default class AppStorage {
     get jabbingMaster(): boolean {
         const value: boolean | undefined = localStorage['jabbingMaster']
         if (value) {
-            return value;
+            return value
         }
-        return false;
+        return false
     }
 
     set jabbingMaster(newValue: boolean) {

@@ -87,7 +87,7 @@ export default class AttackResolver {
             if (attackResult.isHit) {
                 hits++
             }
-        });
+        })
         return result
     }
 

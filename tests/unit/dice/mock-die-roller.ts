@@ -2,19 +2,19 @@ import DieRoller from '@/dice/die-roller'
 
 export default class MockDieRoller extends DieRoller {
 
-    sidesArgs: number[] = [];
+    sidesArgs: number[] = []
     private mockValues = new Map<number, number[]>()
 
     setMockValue(die: number, value: number[]) {
-        this.mockValues.set(die, value);
+        this.mockValues.set(die, value)
     }
 
     rollD(sides: number): number {
-        this.sidesArgs.push(sides);
+        this.sidesArgs.push(sides)
         const value = this.mockValues.get(sides)?.shift()
         if (value) {
-            return value;
+            return value
         }
-        return 0;
+        return 0
     }
 }

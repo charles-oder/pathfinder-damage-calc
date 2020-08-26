@@ -1,40 +1,40 @@
 import DieRoller from '@/dice/die-roller'
-import Logger from '@/logging/logger';
+import Logger from '@/logging/logger'
 
 export default class MultiDieRoller {
 
-    private dieRoller: DieRoller;
+    private dieRoller: DieRoller
 
     constructor(dieRoller: DieRoller = new DieRoller) {
         this.dieRoller = dieRoller
     }
 
     roll(count: number, sides: number): number {
-        let total = 0;
+        let total = 0
         for (let i = 0; i < count; i++) {
-            total += this.dieRoller.rollD(sides);
+            total += this.dieRoller.rollD(sides)
         }
-        return total;
+        return total
     }
 
     rollDieString(dieString: string): number {
-        let total = 0;
-        const dieSets = dieString.split('+');
+        let total = 0
+        const dieSets = dieString.split('+')
         dieSets.forEach((die) => {
-            total += this.rollSingleDie(die);
-        });
-        return total;
+            total += this.rollSingleDie(die)
+        })
+        return total
     }
 
     private rollSingleDie(dieString: string): number {
-        const components = dieString.split('d');
+        const components = dieString.split('d')
         if (components.length == 1) {
-            return parseInt(components[0]);
+            return parseInt(components[0])
         }
-        const count = parseInt(components[0]);
-        const sides = parseInt(components[1]);
-        Logger.log('count: ' + count + ' sides: ' + sides);
-        return this.roll(count, sides);
+        const count = parseInt(components[0])
+        const sides = parseInt(components[1])
+        Logger.log('count: ' + count + ' sides: ' + sides)
+        return this.roll(count, sides)
     }
 
 }

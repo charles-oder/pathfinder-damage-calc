@@ -10,8 +10,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { FullAttackResultSet, FullAttackResult } from '@/attack/attack-result';
+import { defineComponent } from 'vue'
+import { FullAttackResultSet, FullAttackResult } from '@/attack/attack-result'
 
 export default defineComponent({
     name: 'SimSettingsView',
@@ -33,48 +33,48 @@ export default defineComponent({
             return props.results?.colors[index] ?? '#CCC'
         }
         function maxDamage(): number {
-            let max = 0;
+            let max = 0
             props.results?.results.forEach((row) => {
-                row.forEach((r) => {max = Math.max(max, r.totalDamage)});
-            });
+                row.forEach((r) => { max = Math.max(max, r.totalDamage) })
+            })
             return max
         }
 
         function damageDeltaForIndex(index: number, barIndex: number): number {
             const baseResults = props.results?.results[index][0] ?? new FullAttackResult()
             const compResults = props.results?.results[index][barIndex] ?? new FullAttackResult()
-            const base = baseResults.totalDamage / baseResults.rounds;
-            const comp = compResults.totalDamage / compResults.rounds;
-            return (comp - base);
+            const base = baseResults.totalDamage / baseResults.rounds
+            const comp = compResults.totalDamage / compResults.rounds
+            return (comp - base)
         }
         function widthForResult(result: FullAttackResult): string {
-            const damagePerRound = result.totalDamage / result.rounds;
-            const maxDamagePerRound = maxDamage() / result.rounds;
+            const damagePerRound = result.totalDamage / result.rounds
+            const maxDamagePerRound = maxDamage() / result.rounds
             const damagePercentage = damagePerRound / maxDamagePerRound * 100
-            return damagePercentage + '%';
+            return damagePercentage + '%'
         }
         function averageHits(results: FullAttackResult): string {
-            return (results.totalHits / results.rounds).toFixed(1)    
+            return (results.totalHits / results.rounds).toFixed(1);   
         }
         function critRate(results: FullAttackResult): string {
             return Math.round(results.totalCrits / results.totalHits * 100) + '%'
         }
         function resultDescription(index: number, barIndex: number): string {
             const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
-            const ac = results.targetAc;
+            const ac = results.targetAc
             const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
-            const damagePerRound = (results.totalDamage / results.rounds).toFixed(1);
+            const damagePerRound = (results.totalDamage / results.rounds).toFixed(1)
             return 'AC: ' + ac
                 + ' H/Rnd: ' + averageHits(results)
                 + ' (' + critRate(results) + ' crit)'
                 + ' Dmg/Rnd: ' + damagePerRound
-                + (barIndex > 0 ? ' (' + delta + ')' : '');
+                + (barIndex > 0 ? ' (' + delta + ')' : '')
         }
         function detailedDescription(index: number, barIndex: number): string {
             const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
-            const ac = results.targetAc;
+            const ac = results.targetAc
             const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
-            const damagePerRound = (results.totalDamage / results.rounds).toFixed(1);
+            const damagePerRound = (results.totalDamage / results.rounds).toFixed(1)
             const hitPercentage = (results.totalHits / results.totalAttacks * 100).toFixed(1)
             let output = 'Target AC: ' + ac
                 + '\n Total Attacks: ' + results.totalAttacks
@@ -102,7 +102,7 @@ export default defineComponent({
 
     }
   
-});
+})
 </script>
 
 <style scoped lang="scss">

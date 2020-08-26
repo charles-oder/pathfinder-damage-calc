@@ -8,9 +8,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
-import SimSettings from '@/config/sim-settings';
-import TooltipField from '@/TooltipField.vue';
+import { defineComponent, computed } from 'vue'
+import SimSettings from '@/config/sim-settings'
+import TooltipField from '@/TooltipField.vue'
 
 export default defineComponent({
     name: 'SimSettingsView',
@@ -24,10 +24,11 @@ export default defineComponent({
         const simSettings = computed({
             get: () => props.settings,
             set: (value) => emit('update:settings', value)
-        });
-        const iterationTooltip = 'The number of times to run each sim.  Higher numbers yeild more consistent results, but can take some time to run.'
-        const targetAcMinTooltip = 'The lowest target armor classes to run the sim against';
-        const targetAcMaxTooltip = 'The highest target armor classes to run the sim against';
+        })
+        const iterationTooltip = 'The number of times to run each sim.  Higher numbers yeild ' 
+            + 'more consistent results, but can take some time to run.'
+        const targetAcMinTooltip = 'The lowest target armor classes to run the sim against'
+        const targetAcMaxTooltip = 'The highest target armor classes to run the sim against'
         return {
             simSettings,
             iterationTooltip,
@@ -36,7 +37,7 @@ export default defineComponent({
         }
     },
   
-});
+})
 </script>
 
 <style scoped lang="scss">

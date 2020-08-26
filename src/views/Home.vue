@@ -12,12 +12,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, reactive } from 'vue';
-import SimSettingsView from '@/config/SimSettingsView.vue';
-import AttackSettingsView from '@/config/AttackSettingsView.vue';
+import { defineComponent, ref, onMounted, reactive } from 'vue'
+import SimSettingsView from '@/config/SimSettingsView.vue'
+import AttackSettingsView from '@/config/AttackSettingsView.vue'
 import AttackResultsView from '@/attack/AttackResultsView.vue'
-import { FullAttackResultSet } from '@/attack/attack-result';
-import AttackResolver from '@/attack/attack-resolver';
+import { FullAttackResultSet } from '@/attack/attack-result'
+import AttackResolver from '@/attack/attack-resolver'
 import SimSettings from '@/config/sim-settings'
 import AttackSettings from '@/config/attack-settings'
 
@@ -35,63 +35,65 @@ export default defineComponent({
   methods: {
   },
   setup() {
-    const simSettings = reactive(new SimSettings());
+    const simSettings = reactive(new SimSettings())
     const attackSettings = reactive([
       new AttackSettings(),
       new AttackSettings(),
       new AttackSettings()
-    ]);
-    const results = reactive(new FullAttackResultSet());
-    const resultSet = reactive(new FullAttackResultSet());
-    const buttonTitle = ref('Calculate');
+    ])
+    const results = reactive(new FullAttackResultSet())
+    const resultSet = reactive(new FullAttackResultSet())
+    const buttonTitle = ref('Calculate')
     let resolvers: Array<AttackResolver> = []
-    let running = false;
-    let startTime = 0;
-    let lapTime = 0;
+    let running = false
+    let startTime = 0
+    let lapTime = 0
 
     function startTimer() {
-      startTime = new Date().getTime();
-      lapTime = startTime;
+      startTime = new Date().getTime()
+      lapTime = startTime
     }
 
     function printTimer(name: string, end = false) {
         const endTime = new Date().getTime()
-        const runningTime = ((endTime - (end ? startTime : lapTime)) / 1000).toFixed(3);
-        lapTime = endTime;
+        const runningTime = ((endTime - (end ? startTime : lapTime)) / 1000).toFixed(3)
+        lapTime = endTime
+
+        // eslint-diable-next-line
         console.log(name + ' completed in ' + runningTime + ' seconds')
     }
 
     function killTimeouts() {
-        const highestTimeoutId = setTimeout(";");
+        const highestTimeoutId = setTimeout(";")
         for (let id = 0 ; id < highestTimeoutId ; id++) {
-            clearTimeout(id); 
+            clearTimeout(id)
         }
     }
 
     function runJob(ac: number, iteration: number, batchSize: number) {
       const totalIterations = parseInt(simSettings.iterations)
       if (iteration >= totalIterations) {
-        printTimer('AC ' + ac);
-        ac++;
-        iteration = 0;
+        printTimer('AC ' + ac)
+        ac++
+        iteration = 0
       }
       if (ac > parseInt(simSettings.acMax)) {
-        printTimer('Job', true);
+        printTimer('Job', true)
         buttonTitle.value = 'Calculate'
-        running = false;
-        return;
+        running = false
+        return
       }
       const index = ac - parseInt(simSettings.acMin)
 
-      buttonTitle.value = 'Calculating (AC: ' + ac + ', iteration: ' + iteration + ')... Click to cancel';
+      buttonTitle.value = 'Calculating (AC: ' + ac + ', iteration: ' + iteration + ')... Click to cancel'
       setTimeout(() => {
         for (let i = 0; i < batchSize; i++) {
           for (let r = 0; r < resolvers.length; r++) {
-            resultSet.addResult(index, r, resolvers[r].resolveFullAttack(ac));
+            resultSet.addResult(index, r, resolvers[r].resolveFullAttack(ac))
           }
 
         }
-        runJob(ac, iteration + batchSize, batchSize);
+        runJob(ac, iteration + batchSize, batchSize)
       }, 0)
 
     }
@@ -99,26 +101,26 @@ export default defineComponent({
     function caclulateClicked() {
       startTimer()
       if (running) {
-        running = false;
-        killTimeouts();
-        buttonTitle.value = 'Calculate';
-        return;
+        running = false
+        killTimeouts()
+        buttonTitle.value = 'Calculate'
+        return
       }
-      running = true;
-      simSettings.save();
-      attackSettings[0].save();
-      resultSet.colors = attackSettings.map((setting) => { return setting.color });
-      resultSet.reset();
+      running = true
+      simSettings.save()
+      attackSettings[0].save()
+      resultSet.colors = attackSettings.map((setting) => { return setting.color })
+      resultSet.reset()
 
-      resolvers = attackSettings.map((setting) => { return new AttackResolver(setting) });
+      resolvers = attackSettings.map((setting) => { return new AttackResolver(setting) })
 
       buttonTitle.value = 'Starting run...'
-      const batchSize = Math.max(Math.min(parseInt(simSettings.iterations) / 100, 1000), 1);
-      console.log('Starting Run (Batch Size: ' + batchSize + ')');
-      runJob(parseInt(simSettings.acMin), 0, batchSize);
+      const batchSize = Math.max(Math.min(parseInt(simSettings.iterations) / 100, 1000), 1)
+      // eslint-diable-next-line
+      console.log('Starting Run (Batch Size: ' + batchSize + ')')
+      runJob(parseInt(simSettings.acMin), 0, batchSize)
     }
     onMounted(() => {
-      attackSettings[0]
       attackSettings[0].color = '#BBDB9B'
       attackSettings[0].name = 'BASE'
       attackSettings[1].color = '#ABC4A1'
@@ -126,7 +128,7 @@ export default defineComponent({
       attackSettings[2].color = '#9DB4AB'
       attackSettings[2].name = 'OPTION 2'
 
-    });
+    })
     
     return {
       caclulateClicked,
@@ -138,7 +140,7 @@ export default defineComponent({
     }
   },
   
-});
+})
 
 </script>
 

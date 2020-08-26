@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed } from 'vue'
 import AttackSettings from '@/config/attack-settings'
-import TooltipField from '@/TooltipField.vue';
+import TooltipField from '@/TooltipField.vue'
 
 export default defineComponent({
     name: 'AttackSettingsView',
@@ -29,22 +29,22 @@ export default defineComponent({
         const attackSettings = computed({
             get: () => props.settings,
             set: (value) => emit('update:settings', value)
-        });
-        const attacksTooltip = 'Attacks to make each round. Format:\n+15/+10/+5';
-        const attackBonusTooltip = 'Additional bonus to hit.';
-        const critConfirmTooltip = 'Additional bonus to confirm critical hits.';
-        const damageToolitp = 'Damage per attack.  Format:\n1d8+2d6';
-        const critThresholdTooltip = 'The natural die roll for a critical threat';
+        })
+        const attacksTooltip = 'Attacks to make each round. Format:\n+15/+10/+5'
+        const attackBonusTooltip = 'Additional bonus to hit.'
+        const critConfirmTooltip = 'Additional bonus to confirm critical hits.'
+        const damageToolitp = 'Damage per attack.  Format:\n1d8+2d6'
+        const critThresholdTooltip = 'The natural die roll for a critical threat'
         const critDamageBonusTooltip = 'The bonus damage for critical hits.  This ' 
-        + 'is in addition to normal damage (i.e. <normal dmg> + <crit dmg>).  Format:\n1d8+2d6';
+        + 'is in addition to normal damage (i.e. <normal dmg> + <crit dmg>).  Format:\n1d8+2d6'
         const modsTooltip = 'Conditional modifications to damage based on attack or'
         + ' hit sequence.  Can be based on the number of the attack in sequence, or' 
         + ' the number of the hit in sequence. Multiple conditions must be separated' 
         + ' by a semicolon and are read from left to right, applying the first condition' 
         + ' found.  Example: The Jabbing Master feat says that the second successful hit'
         + ' does an additional 2d6 damage, and that each subsequent attack deals an' 
-        + ' additional 4d6 damage this would be written as: \nhit > 2:4d6;hit > 1:2d6';
-        const damageReductionTooltip = 'Damage Reduction.  The amount to reduce each individual attack by.';
+        + ' additional 4d6 damage this would be written as: \nhit > 2:4d6;hit > 1:2d6'
+        const damageReductionTooltip = 'Damage Reduction.  The amount to reduce each individual attack by.'
         return {
             attackSettings,
             attacksTooltip,
@@ -58,7 +58,7 @@ export default defineComponent({
         }
     },
   
-});
+})
 </script>
 
 <style scoped lang="scss">
