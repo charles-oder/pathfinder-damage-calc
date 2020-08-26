@@ -39,18 +39,18 @@ export default class AttackResolver {
                 Logger.log('processMod(mod: ' + mod + ', attack: ' + attack + ', hit: ' + hit + ', isCrit: ' + isCrit + ')')
                 Logger.log('components: ' + JSON.stringify(components));
                 if (isCrit) {
-                    if (components.length < 3) {
-                        return 0;
-                    }
-                    return this.dieRoller.rollDieString(components[2]);
+                    return this.getDamageForComponent(components[2])
                 }
-                if (components.length < 2) {
-                    return 0;
-                }
-                return this.dieRoller.rollDieString(components[1]);
+                return this.getDamageForComponent(components[1])
             }
         }
         return 0;
+    }
+    getDamageForComponent(component: string | undefined): number {
+        if (component) {
+            return this.dieRoller.rollDieString(component)
+        }
+        return 0
     }
 
     modConditionIsTrue(mod: string, compValue: number): boolean {
