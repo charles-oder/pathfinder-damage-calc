@@ -38,7 +38,7 @@ describe('die-roller.ts', () => {
         });
         expect(maxRoll).to.equal(6);
         expect(minRoll).to.equal(1);
-        expect(maxCount / minCount).to.lessThan(1.02)
+        expect(maxCount / minCount).to.lessThan(1.03)
         expect(maxCount / minCount).to.greaterThan(0.98)
     }),
     it('d20 rolls variety of 1-20', () => {
@@ -62,7 +62,7 @@ describe('die-roller.ts', () => {
         });
         expect(maxRoll).to.equal(20);
         expect(minRoll).to.equal(1);
-        expect(maxCount / minCount).to.lessThan(1.02)
+        expect(maxCount / minCount).to.lessThan(1.03)
         expect(maxCount / minCount).to.greaterThan(0.98)
     })
 
