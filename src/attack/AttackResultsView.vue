@@ -1,113 +1,158 @@
 <template>
-    <div class="attack-results-view">
-      <div class="results-line-item" v-for="(result, index) in results.results" v-bind:key="index">
-        <div class="results-container" v-for="(set, barIndex) in result" v-bind:key="barIndex">
-          <div class="results-data tooltip">{{ resultDescription(index, barIndex) }}<div class="tooltiptext">{{detailedDescription(index, barIndex)}}</div></div>
-          <div class="results-meter-bar base" v-bind:style="{width: widthForResult(set), background: color(barIndex)}"></div>
+  <div class="attack-results-view">
+    <div
+      class="results-line-item"
+      v-for="(result, index) in results.results"
+      v-bind:key="index"
+    >
+      <div
+        class="results-container"
+        v-for="(set, barIndex) in result"
+        v-bind:key="barIndex"
+      >
+        <div class="results-data tooltip">
+          {{ resultDescription(index, barIndex) }}
+          <div class="tooltiptext">
+            {{ detailedDescription(index, barIndex) }}
+          </div>
         </div>
+        <div
+          class="results-meter-bar base"
+          v-bind:style="{
+            width: widthForResult(set),
+            background: color(barIndex)
+          }"
+        ></div>
       </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { FullAttackResultSet, FullAttackResult } from '@/attack/attack-result'
+import { defineComponent } from "vue";
+import { FullAttackResultSet, FullAttackResult } from "@/attack/attack-result";
 
 export default defineComponent({
-    name: 'SimSettingsView',
-    components: {
-    },
-    props: {
-        results: FullAttackResultSet
-    },
-    data() {
-        return {
-            maxDamage: 0
-        }
-    },
-    methods: {
-
-    },
-    setup(props) {
-        function color(index: number): string | undefined {
-            return props.results?.colors[index] ?? '#CCC'
-        }
-        function maxDamage(): number {
-            let max = 0
-            props.results?.results.forEach((row) => {
-                row.forEach((r) => { max = Math.max(max, r.totalDamage) })
-            })
-            return max
-        }
-
-        function damageDeltaForIndex(index: number, barIndex: number): number {
-            const baseResults = props.results?.results[index][0] ?? new FullAttackResult()
-            const compResults = props.results?.results[index][barIndex] ?? new FullAttackResult()
-            const base = baseResults.totalDamage / baseResults.rounds
-            const comp = compResults.totalDamage / compResults.rounds
-            return (comp - base)
-        }
-        function widthForResult(result: FullAttackResult): string {
-            const damagePerRound = result.totalDamage / result.rounds
-            const maxDamagePerRound = maxDamage() / result.rounds
-            const damagePercentage = damagePerRound / maxDamagePerRound * 100
-            return damagePercentage + '%'
-        }
-        function averageHits(results: FullAttackResult): string {
-            return (results.totalHits / results.rounds).toFixed(1)   
-        }
-        function critRate(results: FullAttackResult): string {
-            return Math.round(results.totalCrits / results.totalHits * 100) + '%'
-        }
-        function resultDescription(index: number, barIndex: number): string {
-            const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
-            const ac = results.targetAc
-            const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
-            const damagePerRound = (results.totalDamage / results.rounds).toFixed(1)
-            return 'AC: ' + ac
-                + ' H/Rnd: ' + averageHits(results)
-                + ' (' + critRate(results) + ' crit)'
-                + ' Dmg/Rnd: ' + damagePerRound
-                + (barIndex > 0 ? ' (' + delta + ')' : '')
-        }
-        function detailedDescription(index: number, barIndex: number): string {
-            const results = props.results?.results[index][barIndex] ?? new FullAttackResult()
-            const ac = results.targetAc
-            const delta = damageDeltaForIndex(index, barIndex).toFixed(1)
-            const damagePerRound = (results.totalDamage / results.rounds).toFixed(1)
-            const hitPercentage = (results.totalHits / results.totalAttacks * 100).toFixed(1)
-            let output = 'Target AC: ' + ac
-                + '\n Total Attacks: ' + results.totalAttacks
-                + '\n Total Hits: ' + results.totalHits
-                + '\n Avg Hits/rnd: ' + averageHits(results) + ' (' + hitPercentage + '%) '
-                + '\n Total Crits: ' + results.totalCrits
-                + '\n Crit Rate: ' + critRate(results)
-                + '\n Base Damage: ' + results.totalBaseDamage
-                + '\n Crit Damage: ' + results.totalCritDamage
-                + '\n Mod Damage: ' + results.totalModDamage
-                + '\n Total Damage: ' + results.totalDamage
-                + '\n Damage/rnd: ' + damagePerRound
-            if (barIndex > 0) {
-                output += '\n Difference from base: ' + delta
-            }
-            return output
-        }
-        
-        return {
-            resultDescription,
-            color,
-            widthForResult,
-            detailedDescription
-        }
-
+  name: "SimSettingsView",
+  components: {},
+  props: {
+    results: FullAttackResultSet
+  },
+  data() {
+    return {
+      maxDamage: 0
+    };
+  },
+  methods: {},
+  setup(props) {
+    function color(index: number): string | undefined {
+      return props.results?.colors[index] ?? "#CCC";
     }
-  
-})
+    function maxDamage(): number {
+      let max = 0;
+      props.results?.results.forEach(row => {
+        row.forEach(r => {
+          max = Math.max(max, r.totalDamage);
+        });
+      });
+      return max;
+    }
+
+    function damageDeltaForIndex(index: number, barIndex: number): number {
+      const baseResults =
+        props.results?.results[index][0] ?? new FullAttackResult();
+      const compResults =
+        props.results?.results[index][barIndex] ?? new FullAttackResult();
+      const base = baseResults.totalDamage / baseResults.rounds;
+      const comp = compResults.totalDamage / compResults.rounds;
+      return comp - base;
+    }
+    function widthForResult(result: FullAttackResult): string {
+      const damagePerRound = result.totalDamage / result.rounds;
+      const maxDamagePerRound = maxDamage() / result.rounds;
+      const damagePercentage = (damagePerRound / maxDamagePerRound) * 100;
+      return damagePercentage + "%";
+    }
+    function averageHits(results: FullAttackResult): string {
+      return (results.totalHits / results.rounds).toFixed(1);
+    }
+    function critRate(results: FullAttackResult): string {
+      return Math.round((results.totalCrits / results.totalHits) * 100) + "%";
+    }
+    function resultDescription(index: number, barIndex: number): string {
+      const results =
+        props.results?.results[index][barIndex] ?? new FullAttackResult();
+      const ac = results.targetAc;
+      const delta = damageDeltaForIndex(index, barIndex).toFixed(1);
+      const damagePerRound = (results.totalDamage / results.rounds).toFixed(1);
+      return (
+        "AC: " +
+        ac +
+        " H/Rnd: " +
+        averageHits(results) +
+        " (" +
+        critRate(results) +
+        " crit)" +
+        " Dmg/Rnd: " +
+        damagePerRound +
+        (barIndex > 0 ? " (" + delta + ")" : "")
+      );
+    }
+    function detailedDescription(index: number, barIndex: number): string {
+      const results =
+        props.results?.results[index][barIndex] ?? new FullAttackResult();
+      const ac = results.targetAc;
+      const delta = damageDeltaForIndex(index, barIndex).toFixed(1);
+      const damagePerRound = (results.totalDamage / results.rounds).toFixed(1);
+      const hitPercentage = (
+        (results.totalHits / results.totalAttacks) *
+        100
+      ).toFixed(1);
+      let output =
+        "Target AC: " +
+        ac +
+        "\n Total Attacks: " +
+        results.totalAttacks +
+        "\n Total Hits: " +
+        results.totalHits +
+        "\n Avg Hits/rnd: " +
+        averageHits(results) +
+        " (" +
+        hitPercentage +
+        "%) " +
+        "\n Total Crits: " +
+        results.totalCrits +
+        "\n Crit Rate: " +
+        critRate(results) +
+        "\n Base Damage: " +
+        results.totalBaseDamage +
+        "\n Crit Damage: " +
+        results.totalCritDamage +
+        "\n Mod Damage: " +
+        results.totalModDamage +
+        "\n Total Damage: " +
+        results.totalDamage +
+        "\n Damage/rnd: " +
+        damagePerRound;
+      if (barIndex > 0) {
+        output += "\n Difference from base: " + delta;
+      }
+      return output;
+    }
+
+    return {
+      resultDescription,
+      color,
+      widthForResult,
+      detailedDescription
+    };
+  }
+});
 </script>
 
 <style scoped lang="scss">
 .attack-results-view {
-    position: relative;
+  position: relative;
 }
 .results-container {
   display: inline-block;
@@ -153,5 +198,4 @@ export default defineComponent({
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
-
 </style>

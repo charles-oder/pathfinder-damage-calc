@@ -1,40 +1,48 @@
 <template>
   <div class="home">
     <div class="settings">
-      <AttackSettingsView v-for="(settings, index) in viewModel.attackSettings" v-bind:key="settings.name" class="settings-container" v-model:settings="viewModel.attackSettings[index]"/>
-      <SimSettingsView class="settings-container" v-model:settings="viewModel.simSettings"/>
-      <button class="calc-button" v-on:click="viewModel.caclulateClicked()">{{viewModel.buttonTitle}}</button>
+      <AttackSettingsView
+        v-for="(settings, index) in viewModel.attackSettings"
+        v-bind:key="settings.name"
+        class="settings-container"
+        v-model:settings="viewModel.attackSettings[index]"
+      />
+      <SimSettingsView
+        class="settings-container"
+        v-model:settings="viewModel.simSettings"
+      />
+      <button class="calc-button" v-on:click="viewModel.caclulateClicked()">
+        {{ viewModel.buttonTitle }}
+      </button>
     </div>
     <div class="results">
-      <AttackResultsView :results="viewModel.resultSet"/>
+      <AttackResultsView :results="viewModel.resultSet" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
-import SimSettingsView from '@/config/SimSettingsView.vue'
-import AttackSettingsView from '@/config/AttackSettingsView.vue'
-import AttackResultsView from '@/attack/AttackResultsView.vue'
-import HomeViewModel from '@/views/home-view-model'
+import { defineComponent, reactive } from "vue";
+import SimSettingsView from "@/config/SimSettingsView.vue";
+import AttackSettingsView from "@/config/AttackSettingsView.vue";
+import AttackResultsView from "@/attack/AttackResultsView.vue";
+import HomeViewModel from "@/views/home-view-model";
 
 export default defineComponent({
-  name: 'Home',
+  name: "Home",
   components: {
     SimSettingsView,
     AttackSettingsView,
     AttackResultsView
   },
   setup() {
-    const viewModel = reactive(new HomeViewModel())
+    const viewModel = reactive(new HomeViewModel());
 
     return {
       viewModel
-    }
-  },
-  
-})
-
+    };
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -64,5 +72,4 @@ export default defineComponent({
   width: 90%;
   margin: auto;
 }
-
 </style>
