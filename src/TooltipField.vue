@@ -29,7 +29,7 @@ export default defineComponent({
             if (!(tooltipText instanceof HTMLElement)) {
                 return
             }
-            if (!tooltipText) { return; }
+            if (!tooltipText) { return }
             const tooltipRect = tooltipText.getBoundingClientRect()
             let tipX = tooltip.getBoundingClientRect().width
             let tipY = tooltip.getBoundingClientRect().height

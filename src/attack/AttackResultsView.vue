@@ -54,7 +54,7 @@ export default defineComponent({
             return damagePercentage + '%'
         }
         function averageHits(results: FullAttackResult): string {
-            return (results.totalHits / results.rounds).toFixed(1);   
+            return (results.totalHits / results.rounds).toFixed(1)   
         }
         function critRate(results: FullAttackResult): string {
             return Math.round(results.totalCrits / results.totalHits * 100) + '%'
