@@ -43,7 +43,7 @@ export default defineComponent({
     function roll() {
       const str = dieStringValue.value;
       if (str) {
-        result.value = dieRoller.rollDieString(str).toString();
+        result.value = dieRoller.rollDieStringWithBreakdown(str).toString();
       }
     }
     function deleteRoll() {
