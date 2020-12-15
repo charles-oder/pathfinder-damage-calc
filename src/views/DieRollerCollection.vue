@@ -1,21 +1,53 @@
 <template>
   <div class="die-roller-collection">
-    Die Roller
+    <DieRoller
+      v-for="(die, index) in dieCollection.dice"
+      v-bind:key="index"
+      v-model:name="die.name"
+      v-model:dieString="die.dieString"
+      v-on:data-updated="dataUpdated()"
+      v-on:delete-roll="deleteRoll(index)"
+      class="die-roller"
+    />
+    <button @click="addRoll()" class="add-button">Add</button>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
-import HomeViewModel from "@/views/home-view-model";
+import DieRoller from "@/views/DieRoller.vue";
+import AppStorage from "@/storage";
+import { DieConfig } from "@/config/die-config";
 
 export default defineComponent({
   name: "DieRollerCollection",
-  components: {},
+  components: {
+    DieRoller
+  },
   setup() {
-    const viewModel = reactive(new HomeViewModel());
+    const appStore = new AppStorage();
+    const dieCollection = reactive(appStore.dieCollection);
+
+    function dataUpdated() {
+      console.log("data updated!!!");
+      appStore.dieCollection = dieCollection;
+    }
+
+    function addRoll() {
+      dieCollection.dice?.push(DieConfig.default);
+      appStore.dieCollection = dieCollection;
+    }
+
+    function deleteRoll(index: number) {
+      dieCollection.dice?.splice(index, 1);
+      appStore.dieCollection = dieCollection;
+    }
 
     return {
-      viewModel
+      dieCollection,
+      dataUpdated,
+      addRoll,
+      deleteRoll
     };
   }
 });
@@ -25,5 +57,13 @@ export default defineComponent({
 .die-roller-collection {
   width: 100%;
   margin: 0;
+}
+.die-roller {
+  float: left;
+  margin: 5px 10px;
+}
+.add-button {
+  float: left;
+  margin: 5px 10px;
 }
 </style>

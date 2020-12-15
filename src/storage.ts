@@ -1,3 +1,5 @@
+import { DieCollectionConfig } from "./config/die-config";
+
 export default class AppStorage {
   get iterations(): string {
     const value: string | undefined = localStorage["iterations"];
@@ -153,5 +155,17 @@ export default class AppStorage {
 
   set jabbingMaster(newValue: boolean) {
     localStorage["jabbingMaster"] = newValue;
+  }
+
+  get dieCollection(): DieCollectionConfig {
+    const json: string | undefined = localStorage["dieCollection"];
+    if (json) {
+      return JSON.parse(json);
+    }
+    return DieCollectionConfig.default;
+  }
+
+  set dieCollection(newValue: DieCollectionConfig) {
+    localStorage["dieCollection"] = JSON.stringify(newValue);
   }
 }
