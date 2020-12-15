@@ -9,7 +9,7 @@
       <button class="roll-button" @click="roll()">Roll</button>
     </div>
     <div class="result-pane">
-      <div class="result">{{ result }}</div>
+      <div v-bind:class="['result', resultSizeClass()]">{{ result }}</div>
     </div>
   </div>
 </template>
@@ -51,12 +51,25 @@ export default defineComponent({
     function deleteRoll() {
       emit("delete-roll");
     }
+    function resultSizeClass() {
+      if (result.value.length < 15) {
+        return "extra-large-text";
+      }
+      if (result.value.length < 40) {
+        return "large-text";
+      }
+      if (result.value.length < 53) {
+        return "medium-text";
+      }
+      return "small-text";
+    }
     return {
       nameValue,
       dieStringValue,
       result,
       roll,
-      deleteRoll
+      deleteRoll,
+      resultSizeClass
     };
   }
 });
@@ -133,5 +146,17 @@ input {
   position: absolute;
   top: 30px;
   left: 25px;
+}
+.small-text {
+  font-size: 16px;
+}
+.medium-text {
+  font-size: 24px;
+}
+.large-text {
+  font-size: 28px;
+}
+.extra-large-text {
+  font-size: 40px;
 }
 </style>
