@@ -1,14 +1,16 @@
 <template>
   <div class="die-roller">
     <div>
-      <input v-model="nameValue" />
-      <button @click="deleteRoll()">Delete</button>
+      <input class="name-field" v-model="nameValue" />
+      <button class="delete-button" @click="deleteRoll()">X</button>
     </div>
     <div>
-      <input v-model="dieStringValue" />
-      <button @click="roll()">Roll</button>
+      <input class="dice-field" v-model="dieStringValue" />
+      <button class="roll-button" @click="roll()">Roll</button>
     </div>
-    <div>{{ result }}</div>
+    <div class="result-pane">
+      <div class="result">{{ result }}</div>
+    </div>
   </div>
 </template>
 
@@ -61,8 +63,75 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.die-roller-collection {
-  width: 100%;
-  margin: 0;
+.die-roller {
+  position: relative;
+  background: #6279b8;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px gray;
+  width: 300px;
+  height: 120px;
+}
+input {
+  border: none;
+  text-align: center;
+  font-size: 1.1em;
+  width: 210px;
+}
+.delete-button {
+  position: absolute;
+  padding: 0;
+  top: 5px;
+  left: 5px;
+  width: 15px;
+  height: 15px;
+  border: none;
+  font-weight: bold;
+  color: white;
+  background: red;
+  text-align: center;
+  font-size: 10px;
+  border-radius: 50%;
+}
+
+.roll-button {
+  position: absolute;
+  border: none;
+  background: green;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  top: 5px;
+  right: 5px;
+  height: 50px;
+  width: 50px;
+}
+.roll-button:focus {
+  border: none;
+  outline: 0;
+}
+
+.result-pane {
+  position: absolute;
+  top: 60px;
+  left: 5px;
+  width: 290px;
+  height: 55px;
+}
+
+.result {
+  margin: auto;
+  color: white;
+}
+
+.name-field {
+  position: absolute;
+  top: 5px;
+  left: 25px;
+}
+
+.dice-field {
+  position: absolute;
+  top: 30px;
+  left: 25px;
 }
 </style>
