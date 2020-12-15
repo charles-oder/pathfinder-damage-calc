@@ -70,7 +70,7 @@ export default defineComponent({
   margin: 5px 10px;
   border-radius: 5px;
   box-shadow: 5px 5px 5px gray;
-  width: 300px;
+  width: 120px;
   height: 120px;
   font-size: 100px;
 }
