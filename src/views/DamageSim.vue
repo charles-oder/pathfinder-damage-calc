@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="damage-sim">
     <div class="settings">
       <AttackSettingsView
         v-for="(settings, index) in viewModel.attackSettings"
@@ -46,7 +46,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.home {
+.damage-sim {
   width: 100%;
   margin: 0;
 }
