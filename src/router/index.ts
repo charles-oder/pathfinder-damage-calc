@@ -5,7 +5,7 @@ import DieRollerCollection from "../views/DieRollerCollection.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/damage-sim"
+    redirect: "/about"
   },
   {
     path: "/damage-sim",
