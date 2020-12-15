@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/DamageSim.vue";
+import DamageSim from "../views/DamageSim.vue";
+import DieRollerCollection from "../views/DieRollerCollection.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -9,7 +10,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/damage-sim",
     name: "DamageSim",
-    component: Home
+    component: DamageSim
+  },
+  {
+    path: "/die-roller",
+    name: "DieRollerCollection",
+    component: DieRollerCollection
   },
   {
     path: "/about",

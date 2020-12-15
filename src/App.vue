@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/damage-sim">Damage Simulator</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">About</router-link> |
+      <router-link to="/die-roller">Die Roller</router-link> |
+      <router-link to="/damage-sim">Damage Simulator</router-link>
     </div>
     <router-view />
   </div>
