@@ -9,7 +9,7 @@
       v-on:delete-roll="deleteRoll(index)"
       class="die-roller"
     />
-    <button @click="addRoll()" class="add-button">Add</button>
+    <button @click="addRoll()" class="add-button">+</button>
   </div>
 </template>
 
@@ -63,7 +63,15 @@ export default defineComponent({
   margin: 5px 10px;
 }
 .add-button {
+  background: #6279b8;
+  border: none;
+  color: white;
   float: left;
   margin: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px gray;
+  width: 300px;
+  height: 120px;
+  font-size: 100px;
 }
 </style>
