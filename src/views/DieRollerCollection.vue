@@ -13,7 +13,7 @@
       </select>
     </div> -->
     <DieRoller
-      v-for="(die, index) in dieCollection.groups[selected]"
+      v-for="(die, index) in dieCollection.groups[0].dice"
       v-bind:key="index"
       v-model:name="die.name"
       v-model:dieString="die.dieString"
@@ -51,12 +51,12 @@ export default defineComponent({
     }
 
     function addRoll() {
-      dieCollection.groups["group 1"]?.push(new DieConfig());
+      dieCollection.groups[0].dice.push(new DieConfig());
       appStore.dieCollection = dieCollection;
     }
 
     function deleteRoll(index: number) {
-      dieCollection.groups["group 1"]?.splice(index, 1);
+      dieCollection.groups[0].dice.splice(index, 1);
       appStore.dieCollection = dieCollection;
     }
 

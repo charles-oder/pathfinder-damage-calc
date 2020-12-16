@@ -1,6 +1,8 @@
 import {
   DieCollectionConfig,
-  LegacyDieCollectionConfig
+  DieGroup,
+  LegacyDieCollectionConfig,
+  LegacyDieCollectionConfigV2
 } from "./config/die-config";
 
 export default class AppStorage {
@@ -161,23 +163,40 @@ export default class AppStorage {
   }
 
   get dieCollection(): DieCollectionConfig {
-    const json: string | undefined = localStorage["dieCollectionGroups"];
+    const json: string | undefined = localStorage["dieGroups"];
     if (json) {
       return JSON.parse(json);
     }
+
+    const legacyV2Json: string | undefined =
+      localStorage["dieCollectionGroups"];
+    if (legacyV2Json) {
+      const legacyCollection: LegacyDieCollectionConfigV2 = JSON.parse(
+        legacyV2Json
+      );
+      const newCollection = new DieCollectionConfig();
+      const group = new DieGroup();
+      group.dice = legacyCollection.groups["group 1"];
+      newCollection.groups = [group];
+      return newCollection;
+    }
+
     const legacyJson: string | undefined = localStorage["dieCollection"];
     if (legacyJson) {
       const legacyCollection: LegacyDieCollectionConfig = JSON.parse(
         legacyJson
       );
       const newCollection = new DieCollectionConfig();
-      newCollection.groups["group 1"] = legacyCollection.dice;
+      const group = new DieGroup();
+      group.dice = legacyCollection.dice;
+      newCollection.groups.push(group);
       return newCollection;
     }
-    return new DieCollectionConfig();
+    const newGroup = new DieCollectionConfig();
+    return newGroup;
   }
 
   set dieCollection(newValue: DieCollectionConfig) {
-    localStorage["dieCollectionGroups"] = JSON.stringify(newValue);
+    localStorage["dieGroups"] = JSON.stringify(newValue);
   }
 }
