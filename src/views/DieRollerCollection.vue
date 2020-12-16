@@ -1,10 +1,6 @@
 <template>
   <div class="die-roller-collection">
     <div class="group-selector">
-      <input
-        @change="dataUpdated()"
-        v-model="dieCollection.groups[selectedIndex].name"
-      />
       <select @change="itemSelected($event.target.selectedIndex)">
         <option
           v-for="(group, index) in dieCollection.groups"
@@ -15,6 +11,10 @@
         </option>
         <option value="add group">add group</option>
       </select>
+      <input
+        @change="dataUpdated()"
+        v-model="dieCollection.groups[selectedIndex].name"
+      />
     </div>
     <DieRoller
       v-for="(die, index) in dieCollection.groups[selectedIndex].dice"
@@ -51,7 +51,7 @@ export default defineComponent({
     }
 
     function addRoll() {
-      dieCollection.groups[0].dice.push(new DieConfig());
+      dieCollection.groups[selectedIndex.value].dice.push(new DieConfig());
       appStore.dieCollection = dieCollection;
     }
 
@@ -132,19 +132,42 @@ export default defineComponent({
   }
 }
 
-select {
+.group-selector {
+  position: relative;
+  margin: 0 auto 10px auto;
+  width: 300px;
+  height: 1.9em;
+  border: 1px solid gray;
+}
+.group-selector > input {
+  position: absolute;
+  left: 0;
+  top: 0;
   border: none;
-  background: red;
+  font-size: 1.5em;
+  width: calc(100% - 25px);
+}
+
+.group-selector > input:focus {
+  outline: 0;
+}
+
+select {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  border: none;
+  background: white;
   border-radius: 5px;
+  font-size: 1.5em;
 }
 select:focus {
   outline: 0;
 }
 option {
-  background: gray;
+  background: white;
 }
 option:checked {
-  background: yellow;
   color: green;
   display: none;
 }
