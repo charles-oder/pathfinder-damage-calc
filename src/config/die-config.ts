@@ -13,7 +13,7 @@ export class DieCollectionConfig {
 }
 
 export class LegacyDieCollectionConfig {
-  public dice: DieConfig[] = [];
+  public dice?: DieConfig[];
 }
 
 export class LegacyDieCollectionConfigV2 {

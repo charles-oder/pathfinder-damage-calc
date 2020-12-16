@@ -1,7 +1,6 @@
 import {
   DieCollectionConfig,
   DieGroup,
-  LegacyDieCollectionConfig,
   LegacyDieCollectionConfigV2
 } from "./config/die-config";
 
@@ -183,13 +182,11 @@ export default class AppStorage {
 
     const legacyJson: string | undefined = localStorage["dieCollection"];
     if (legacyJson) {
-      const legacyCollection: LegacyDieCollectionConfig = JSON.parse(
-        legacyJson
-      );
+      const legacyCollection = JSON.parse(legacyJson);
       const newCollection = new DieCollectionConfig();
       const group = new DieGroup();
-      group.dice = legacyCollection.dice;
-      newCollection.groups.push(group);
+      group.dice = legacyCollection.dice ?? [];
+      newCollection.groups = [group];
       return newCollection;
     }
     const newGroup = new DieCollectionConfig();
