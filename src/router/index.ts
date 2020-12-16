@@ -1,7 +1,4 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import DamageSim from "../views/DamageSim.vue";
-import DieRollerCollection from "../views/DieRollerCollection.vue";
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -10,12 +7,14 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/damage-sim",
     name: "DamageSim",
-    component: DamageSim
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/DamageSim.vue")
   },
   {
     path: "/die-roller",
     name: "DieRollerCollection",
-    component: DieRollerCollection
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/DieRollerCollection.vue")
   },
   {
     path: "/about",
