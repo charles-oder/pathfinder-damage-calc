@@ -93,5 +93,40 @@ describe("multi-die-roller.ts", () => {
       expect(mockDieRoller.sidesArgs.shift()).to.equal(6);
       expect(mockDieRoller.sidesArgs.shift()).to.equal(6);
       expect(mockDieRoller.sidesArgs.shift()).to.equal(6);
+    }),
+    it("rolls die with penalty", () => {
+      const mockDieRoller = new MockDieRoller();
+      mockDieRoller.setMockValue(4, [2, 2]);
+      const testObject = new MultiDieRoller(mockDieRoller);
+
+      const actualValue = testObject.rollDieString("2d4-1");
+
+      expect(actualValue).to.equal(3);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
+    }),
+    it("rolls die with penalty die", () => {
+      const mockDieRoller = new MockDieRoller();
+      mockDieRoller.setMockValue(4, [2, 2, 2]);
+      const testObject = new MultiDieRoller(mockDieRoller);
+
+      const actualValue = testObject.rollDieString("2d4-1d4");
+
+      expect(actualValue).to.equal(2);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
+    }),
+    it("rolls die with penalty ignoring whitespace", () => {
+      const mockDieRoller = new MockDieRoller();
+      mockDieRoller.setMockValue(4, [2, 2, 2]);
+      const testObject = new MultiDieRoller(mockDieRoller);
+
+      const actualValue = testObject.rollDieString("2d4 - 1d4");
+
+      expect(actualValue).to.equal(2);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
+      expect(mockDieRoller.sidesArgs.shift()).to.equal(4);
     });
 });

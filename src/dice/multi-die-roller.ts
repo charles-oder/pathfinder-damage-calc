@@ -10,15 +10,19 @@ export default class MultiDieRoller {
 
   roll(count: number, sides: number): number {
     let total = 0;
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < Math.abs(count); i++) {
       total += this.dieRoller.rollD(sides);
+    }
+    if (count < 0) {
+      total *= -1;
     }
     return total;
   }
 
   rollDieString(dieString: string): number {
     let total = 0;
-    const dieSets = dieString.split("+");
+    const trimmed = dieString.replace(/ /g, "");
+    const dieSets = trimmed.replace(/-/g, "+-").split("+");
     dieSets.forEach(die => {
       total += this.rollSingleDie(die);
     });
@@ -40,7 +44,8 @@ export default class MultiDieRoller {
 
   private splitDieRolls(dieString: string): string[] {
     const output: string[] = [];
-    const dieSets = dieString.split("+");
+    const trimmed = dieString.replace(/ /g, "");
+    const dieSets = trimmed.replace(/-/g, "+-").split("+");
     dieSets.forEach(die => {
       const components = die.split("d");
       if (components.length == 1) {
@@ -49,8 +54,9 @@ export default class MultiDieRoller {
       }
       const count = parseInt(components[0]);
       const sides = parseInt(components[1]);
-      for (let i = 0; i < count; i++) {
-        output.push("1d" + sides);
+      for (let i = 0; i < Math.abs(count); i++) {
+        const str = (count >= 0 ? "" : "-") + "1d" + sides;
+        output.push(str);
       }
     });
     return output;
