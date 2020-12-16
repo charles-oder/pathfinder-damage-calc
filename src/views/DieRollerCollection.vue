@@ -1,19 +1,23 @@
 <template>
   <div class="die-roller-collection">
-    <!-- <div class="group-selector">
-      <select v-model="selected" @change="itemSelected()">
+    <div class="group-selector">
+      <input
+        @change="dataUpdated()"
+        v-model="dieCollection.groups[selectedIndex].name"
+      />
+      <select @change="itemSelected($event.target.selectedIndex)">
         <option
-          v-for="name in groupNames()"
-          v-bind:key="name"
-          value="{{ name }}"
+          v-for="(group, index) in dieCollection.groups"
+          v-bind:key="index"
+          value="{{ index }}"
         >
-          {{ name }}
+          {{ group.name }}
         </option>
         <option value="add group">add group</option>
       </select>
-    </div> -->
+    </div>
     <DieRoller
-      v-for="(die, index) in dieCollection.groups[0].dice"
+      v-for="(die, index) in dieCollection.groups[selectedIndex].dice"
       v-bind:key="index"
       v-model:name="die.name"
       v-model:dieString="die.dieString"
@@ -29,7 +33,7 @@
 import { defineComponent, reactive, ref } from "vue";
 import DieRoller from "@/views/DieRoller.vue";
 import AppStorage from "@/storage";
-import { DieConfig } from "@/config/die-config";
+import { DieConfig, DieGroup } from "@/config/die-config";
 
 export default defineComponent({
   name: "DieRollerCollection",
@@ -39,11 +43,7 @@ export default defineComponent({
   setup() {
     const appStore = new AppStorage();
     const dieCollection = reactive(appStore.dieCollection);
-    // const selected = ref(appStore.dieCollection.groups.keys[0]);
-    function groupNames() {
-      return Object.keys(appStore.dieCollection.groups) as Array<string>;
-    }
-    const selected = ref(groupNames()[0]);
+    const selectedIndex = ref(0);
 
     function dataUpdated() {
       console.log("data updated!!!");
@@ -60,8 +60,16 @@ export default defineComponent({
       appStore.dieCollection = dieCollection;
     }
 
-    function itemSelected() {
-      console.log("Selected: " + selected.value);
+    function itemSelected(index: number) {
+      if (index >= dieCollection.groups.length) {
+        console.log("add group");
+        dieCollection.groups.push(new DieGroup());
+        selectedIndex.value = index;
+        dataUpdated();
+        return;
+      }
+      selectedIndex.value = index;
+      console.log("Selected: " + index);
     }
 
     return {
@@ -69,9 +77,8 @@ export default defineComponent({
       dataUpdated,
       addRoll,
       deleteRoll,
-      selected,
-      itemSelected,
-      groupNames
+      selectedIndex,
+      itemSelected
     };
   }
 });

@@ -164,7 +164,7 @@ export default class AppStorage {
   get dieCollection(): DieCollectionConfig {
     const json: string | undefined = localStorage["dieGroups"];
     if (json) {
-      return JSON.parse(json);
+      return DieCollectionConfig.fromJson(json);
     }
 
     const legacyV2Json: string | undefined =
