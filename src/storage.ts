@@ -1,4 +1,7 @@
-import { DieCollectionConfig } from "./config/die-config";
+import {
+  DieCollectionConfig,
+  LegacyDieCollectionConfig
+} from "./config/die-config";
 
 export default class AppStorage {
   get iterations(): string {
@@ -158,14 +161,23 @@ export default class AppStorage {
   }
 
   get dieCollection(): DieCollectionConfig {
-    const json: string | undefined = localStorage["dieCollection"];
+    const json: string | undefined = localStorage["dieCollectionGroups"];
     if (json) {
       return JSON.parse(json);
     }
-    return DieCollectionConfig.default;
+    const legacyJson: string | undefined = localStorage["dieCollection"];
+    if (legacyJson) {
+      const legacyCollection: LegacyDieCollectionConfig = JSON.parse(
+        legacyJson
+      );
+      const newCollection = new DieCollectionConfig();
+      newCollection.groups["group 1"] = legacyCollection.dice;
+      return newCollection;
+    }
+    return new DieCollectionConfig();
   }
 
   set dieCollection(newValue: DieCollectionConfig) {
-    localStorage["dieCollection"] = JSON.stringify(newValue);
+    localStorage["dieCollectionGroups"] = JSON.stringify(newValue);
   }
 }

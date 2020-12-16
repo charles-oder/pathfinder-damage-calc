@@ -1,14 +1,14 @@
-export class DieCollectionConfig {
-  public static get default(): DieCollectionConfig {
-    return { dice: [{ name: "unnamed", dieString: "1d6" }] };
-  }
-  public dice?: DieConfig[];
+export class DieConfig {
+  public name = "unnamed";
+  public dieString = "1d6";
 }
 
-export class DieConfig {
-  public static get default(): DieConfig {
-    return { name: "unnamed", dieString: "1d6" };
-  }
-  public name?: string;
-  public dieString?: string;
+export class DieCollectionConfig {
+  public groups: Record<string, DieConfig[]> = {
+    "group 1": [new DieConfig()]
+  };
+}
+
+export class LegacyDieCollectionConfig {
+  public dice: DieConfig[] = [];
 }

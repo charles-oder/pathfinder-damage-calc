@@ -1,7 +1,19 @@
 <template>
   <div class="die-roller-collection">
+    <!-- <div class="group-selector">
+      <select v-model="selected" @change="itemSelected()">
+        <option
+          v-for="name in groupNames()"
+          v-bind:key="name"
+          value="{{ name }}"
+        >
+          {{ name }}
+        </option>
+        <option value="add group">add group</option>
+      </select>
+    </div> -->
     <DieRoller
-      v-for="(die, index) in dieCollection.dice"
+      v-for="(die, index) in dieCollection.groups[selected]"
       v-bind:key="index"
       v-model:name="die.name"
       v-model:dieString="die.dieString"
@@ -14,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import DieRoller from "@/views/DieRoller.vue";
 import AppStorage from "@/storage";
 import { DieConfig } from "@/config/die-config";
@@ -27,6 +39,11 @@ export default defineComponent({
   setup() {
     const appStore = new AppStorage();
     const dieCollection = reactive(appStore.dieCollection);
+    // const selected = ref(appStore.dieCollection.groups.keys[0]);
+    function groupNames() {
+      return Object.keys(appStore.dieCollection.groups) as Array<string>;
+    }
+    const selected = ref(groupNames()[0]);
 
     function dataUpdated() {
       console.log("data updated!!!");
@@ -34,20 +51,27 @@ export default defineComponent({
     }
 
     function addRoll() {
-      dieCollection.dice?.push(DieConfig.default);
+      dieCollection.groups["group 1"]?.push(new DieConfig());
       appStore.dieCollection = dieCollection;
     }
 
     function deleteRoll(index: number) {
-      dieCollection.dice?.splice(index, 1);
+      dieCollection.groups["group 1"]?.splice(index, 1);
       appStore.dieCollection = dieCollection;
+    }
+
+    function itemSelected() {
+      console.log("Selected: " + selected.value);
     }
 
     return {
       dieCollection,
       dataUpdated,
       addRoll,
-      deleteRoll
+      deleteRoll,
+      selected,
+      itemSelected,
+      groupNames
     };
   }
 });
@@ -99,5 +123,22 @@ export default defineComponent({
     margin: 0 auto 10px auto;
     width: 90%;
   }
+}
+
+select {
+  border: none;
+  background: red;
+  border-radius: 5px;
+}
+select:focus {
+  outline: 0;
+}
+option {
+  background: gray;
+}
+option:checked {
+  background: yellow;
+  color: green;
+  display: none;
 }
 </style>
