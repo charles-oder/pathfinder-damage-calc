@@ -4,6 +4,10 @@ export class DieConfig {
 }
 
 export class DieGroup {
+  public static fromJson(json: string): DieGroup {
+    const newGroup: DieGroup = JSON.parse(json);
+    return newGroup;
+  }
   public name = "New Group";
   public dice: DieConfig[] = [new DieConfig()];
 }

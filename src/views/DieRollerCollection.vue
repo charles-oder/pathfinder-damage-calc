@@ -9,12 +9,16 @@
         >
           {{ group.name }}
         </option>
-        <option value="add group">add group</option>
       </select>
       <input
         @change="dataUpdated()"
         v-model="dieCollection.groups[selectedIndex].name"
       />
+    </div>
+    <div class="group-management-panel">
+      <button @click="createNewGroup()">NEW</button>
+      <button @click="cloneGroup()">COPY</button>
+      <button @click="deleteGroup()">DELETE</button>
     </div>
     <DieRoller
       v-for="(die, index) in dieCollection.groups[selectedIndex].dice"
@@ -55,18 +59,53 @@ export default defineComponent({
     }
 
     function deleteRoll(index: number) {
-      dieCollection.groups[0].dice.splice(index, 1);
+      const name = dieCollection.groups[selectedIndex.value].dice[index].name;
+      if (!confirm("Delete " + name + "?")) {
+        return;
+      }
+      dieCollection.groups[selectedIndex.value].dice.splice(index, 1);
       appStore.dieCollection = dieCollection;
     }
 
-    function itemSelected(index: number) {
-      if (index >= dieCollection.groups.length) {
-        dieCollection.groups.push(new DieGroup());
-        selectedIndex.value = index;
-        dataUpdated();
+    function createNewGroup() {
+      dieCollection.groups.unshift(new DieGroup());
+      selectedIndex.value = 0;
+      dataUpdated();
+    }
+
+    function deleteGroup() {
+      const name = dieCollection.groups[selectedIndex.value].name;
+      if (!confirm("Delete " + name + "?")) {
         return;
       }
-      selectedIndex.value = index;
+      dieCollection.groups.splice(selectedIndex.value, 1);
+      if (dieCollection.groups.length == 0) {
+        dieCollection.groups.push(new DieGroup());
+      }
+      selectedIndex.value = 0;
+      dataUpdated();
+    }
+
+    function cloneGroup() {
+      const currentGroup = dieCollection.groups[selectedIndex.value];
+      const copyJson = JSON.stringify(currentGroup);
+      const clonedGroup = DieGroup.fromJson(copyJson);
+      clonedGroup.name = clonedGroup.name + " copy";
+      dieCollection.groups.unshift(clonedGroup);
+      selectedIndex.value = 0;
+      dataUpdated();
+    }
+
+    function itemSelected(index: number) {
+      if (index === dieCollection.groups.length) {
+        createNewGroup();
+      } else if (index === dieCollection.groups.length + 1) {
+        cloneGroup();
+      } else if (index === dieCollection.groups.length + 2) {
+        deleteGroup();
+      } else {
+        selectedIndex.value = index;
+      }
     }
 
     return {
@@ -75,7 +114,10 @@ export default defineComponent({
       addRoll,
       deleteRoll,
       selectedIndex,
-      itemSelected
+      itemSelected,
+      cloneGroup,
+      createNewGroup,
+      deleteGroup
     };
   }
 });
@@ -167,5 +209,22 @@ option {
 option:checked {
   color: green;
   display: none;
+}
+.group-management-panel {
+  width: 300px;
+  height: 25px;
+  margin: 0 auto 10px auto;
+}
+.group-management-panel > button {
+  background: #6279b8;
+  border: none;
+  margin: 5px;
+  width: 90px;
+  height: 25px;
+  font-weight: bold;
+  color: white;
+}
+button:focus {
+  outline: 0;
 }
 </style>
