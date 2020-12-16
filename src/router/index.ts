@@ -8,13 +8,13 @@ const routes: Array<RouteRecordRaw> = [
     path: "/damage-sim",
     name: "DamageSim",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/DamageSim.vue")
+      import(/* webpackChunkName: "damage-sim" */ "../views/DamageSim.vue")
   },
   {
     path: "/die-roller",
     name: "DieRollerCollection",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/DieRollerCollection.vue")
+      import(/* webpackChunkName: "die-roller" */ "../views/DieRollerCollection.vue")
   },
   {
     path: "/about",
