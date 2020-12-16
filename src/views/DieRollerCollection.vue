@@ -46,7 +46,6 @@ export default defineComponent({
     const selectedIndex = ref(0);
 
     function dataUpdated() {
-      console.log("data updated!!!");
       appStore.dieCollection = dieCollection;
     }
 
@@ -62,14 +61,12 @@ export default defineComponent({
 
     function itemSelected(index: number) {
       if (index >= dieCollection.groups.length) {
-        console.log("add group");
         dieCollection.groups.push(new DieGroup());
         selectedIndex.value = index;
         dataUpdated();
         return;
       }
       selectedIndex.value = index;
-      console.log("Selected: " + index);
     }
 
     return {
