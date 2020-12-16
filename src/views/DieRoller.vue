@@ -46,27 +46,17 @@ export default defineComponent({
         emit("data-updated");
       }
     });
-    function animate(resultString: string, sum: number) {
-      result.value = "";
-      const max = Math.max(sum, 9);
-      for (let i = 0; i < 10; i++) {
-        setTimeout(() => {
-          total.value = (1 + Math.floor(Math.random() * max)).toString();
-        }, 20 * i);
-      }
-      setTimeout(() => {
-        result.value = resultString;
-        total.value = sum.toString();
-      }, 250);
-    }
 
     function roll() {
       const str = dieStringValue.value;
       if (str) {
-        const results = dieRoller.rollDieStringWithBreakdown(str);
-        const total = results.pop() ?? 0;
-        const result = results.join(" + ");
-        animate(result, total);
+        for (let i = 0; i < 10; i++) {
+          setTimeout(() => {
+            const results = dieRoller.rollDieStringWithBreakdown(str);
+            total.value = results.pop()?.toString() ?? "";
+            result.value = results.join(" + ");
+          }, i * 25);
+        }
       }
     }
 
@@ -85,11 +75,11 @@ export default defineComponent({
     function resultSizeClass() {
       if (result.value.length < 12) {
         return "extra-large-text";
-      } else if (result.value.length < 35) {
+      } else if (result.value.length < 34) {
         return "large-text";
-      } else if (result.value.length < 45) {
+      } else if (result.value.length < 40) {
         return "medium-text";
-      } else if (result.value.length < 55) {
+      } else if (result.value.length < 60) {
         return "small-text";
       } else {
         return "tiny-text";
