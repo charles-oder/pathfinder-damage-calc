@@ -81,14 +81,12 @@ export default defineComponent({
   background: #6279b8;
   border-radius: 5px;
   box-shadow: 5px 5px 5px gray;
-  width: 300px;
-  height: 120px;
 }
 input {
   border: none;
   text-align: center;
   font-size: 1.1em;
-  width: 210px;
+  width: calc(100% - 20px - 70px);
 }
 .delete-button {
   position: absolute;
@@ -126,8 +124,8 @@ input {
 .result-pane {
   position: absolute;
   top: 60px;
-  left: 5px;
-  width: 290px;
+  left: 5%;
+  width: 90%;
   height: 55px;
 }
 

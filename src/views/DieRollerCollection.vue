@@ -61,6 +61,8 @@ export default defineComponent({
 .die-roller {
   float: left;
   margin: 5px 10px;
+  width: 300px;
+  height: 120px;
 }
 .add-button {
   background: #6279b8;
@@ -73,5 +75,29 @@ export default defineComponent({
   width: 120px;
   height: 120px;
   font-size: 100px;
+}
+.add-button:focus {
+  outline: 0;
+}
+
+@media only screen and (max-width: 980px) {
+  .die-roller {
+    width: 30%;
+  }
+}
+
+@media only screen and (max-width: 660px) {
+  .die-roller {
+    position: relative;
+    float: none;
+    margin: 0 auto 10px auto;
+    width: 90%;
+  }
+  .add-button {
+    position: relative;
+    float: none;
+    margin: 0 auto 10px auto;
+    width: 90%;
+  }
 }
 </style>
