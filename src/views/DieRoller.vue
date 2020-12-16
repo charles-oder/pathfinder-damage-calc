@@ -116,8 +116,7 @@ input {
   height: 50px;
   width: 50px;
 }
-.roll-button:focus {
-  border: none;
+button:focus {
   outline: 0;
 }
 
