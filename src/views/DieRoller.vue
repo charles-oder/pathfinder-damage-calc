@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import MultiDieRoller from "@/dice/multi-die-roller";
 
 export default defineComponent({
@@ -54,6 +54,16 @@ export default defineComponent({
         result.value = results.join(" + ");
       }
     }
+
+    watch(dieStringValue, () => {
+      total.value = "";
+      result.value = "";
+    });
+    watch(nameValue, () => {
+      total.value = "";
+      result.value = "";
+    });
+
     function deleteRoll() {
       emit("delete-roll");
     }
