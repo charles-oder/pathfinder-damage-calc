@@ -1,4 +1,4 @@
-# pathfinder-damage-calc
+# d20-damage-calc
 
 ## Project setup
 ```
