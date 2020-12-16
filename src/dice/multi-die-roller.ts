@@ -25,19 +25,16 @@ export default class MultiDieRoller {
     return total;
   }
 
-  rollDieStringWithBreakdown(dieString: string): string {
+  rollDieStringWithBreakdown(dieString: string): number[] {
     let total = 0;
-    let output = "";
+    const output = [];
     const dieSets = this.splitDieRolls(dieString);
     dieSets.forEach(die => {
-      if (output.length > 0) {
-        output += "+ ";
-      }
       const roll = this.rollSingleDie(die);
-      output += roll + " ";
+      output.push(roll);
       total += roll;
     });
-    output += "= " + total;
+    output.push(total);
     return output;
   }
 

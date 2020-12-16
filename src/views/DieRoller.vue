@@ -10,6 +10,9 @@
     </div>
     <div class="result-pane">
       <div v-bind:class="['result', resultSizeClass()]">{{ result }}</div>
+      <div class="total-container">
+        <div v-bind:class="['total', totalSizeClass()]">{{ total }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +31,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const dieRoller = new MultiDieRoller();
     const result = ref("");
+    const total = ref("");
     const nameValue = computed({
       get: () => props.name,
       set: value => {
@@ -45,31 +49,45 @@ export default defineComponent({
     function roll() {
       const str = dieStringValue.value;
       if (str) {
-        result.value = dieRoller.rollDieStringWithBreakdown(str).toString();
+        const results = dieRoller.rollDieStringWithBreakdown(str);
+        total.value = results.pop()?.toString() ?? "";
+        result.value = results.join(" + ");
       }
     }
     function deleteRoll() {
       emit("delete-roll");
     }
     function resultSizeClass() {
-      if (result.value.length < 15) {
+      if (result.value.length < 12) {
         return "extra-large-text";
-      }
-      if (result.value.length < 40) {
+      } else if (result.value.length < 35) {
         return "large-text";
-      }
-      if (result.value.length < 53) {
+      } else if (result.value.length < 45) {
         return "medium-text";
+      } else if (result.value.length < 55) {
+        return "small-text";
+      } else {
+        return "tiny-text";
       }
-      return "small-text";
+    }
+    function totalSizeClass() {
+      if (total.value.length < 2) {
+        return "single-digit-total";
+      } else if (total.value.length < 3) {
+        return "double-digit-total";
+      } else {
+        return "triple-digit-total";
+      }
     }
     return {
       nameValue,
       dieStringValue,
       result,
+      total,
       roll,
       deleteRoll,
-      resultSizeClass
+      resultSizeClass,
+      totalSizeClass
     };
   }
 });
@@ -123,13 +141,37 @@ button:focus {
 .result-pane {
   position: absolute;
   top: 60px;
-  left: 5%;
-  width: 90%;
+  left: 5px;
+  width: calc(100% - 10px);
   height: 55px;
 }
 
 .result {
-  margin: auto;
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: white;
+  width: calc(100% - 65px);
+}
+
+.total-container {
+  position: absolute;
+  border: 2px solid white;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100%;
+  width: 50px;
+}
+
+.total {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
   color: white;
 }
 
@@ -144,6 +186,9 @@ button:focus {
   top: 30px;
   left: 25px;
 }
+.tiny-text {
+  font-size: 12px;
+}
 .small-text {
   font-size: 16px;
 }
@@ -155,5 +200,14 @@ button:focus {
 }
 .extra-large-text {
   font-size: 40px;
+}
+.single-digit-total {
+  font-size: 60px;
+}
+.double-digit-total {
+  font-size: 40px;
+}
+.triple-digit-total {
+  font-size: 28px;
 }
 </style>
