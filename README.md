@@ -1,4 +1,4 @@
-# d20-damage-calc
+# d20-tools
 
 ## Project setup
 ```
