@@ -81,15 +81,16 @@ export default defineComponent({
   position: relative;
   width: 100%;
   display: flex;
-  flex-wrap: wrap;
+  flex-flow: row wrap-reverse;
   cursor: pointer;
+  border-bottom: 2px solid #6279b8;
 }
 .tab {
   position: relative;
   background: #6279b8;
   color: white;
   font-weight: bold;
-  margin: 2px 2px;
+  margin: 2px 5px 0 0;
   display: inline-block;
   padding: 5px 10px;
 }
