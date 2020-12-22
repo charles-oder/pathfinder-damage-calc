@@ -1,6 +1,7 @@
 <template>
   <div v-bind:class="['select-name', isVisible ? 'visible' : 'invisible']">
     <div class="modal-container">
+      <div class="title">Rename: {{ name }}</div>
       <div class="input-container">
         <input v-model="nameValue" type="text" />
       </div>
@@ -74,11 +75,17 @@ export default defineComponent({
   transform: translateX(-50%);
   border-radius: 5px;
 }
+.title {
+  padding: 5px;
+  margin-bottom: 20px;
+}
 input {
   font-size: 1.5em;
+  text-align: center;
 }
 button {
   font-size: 1.5em;
+  font-weight: bold;
   padding: 5px 10px;
   border: none;
   margin: 5px 20px;
