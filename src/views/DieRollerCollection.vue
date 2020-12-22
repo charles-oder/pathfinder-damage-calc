@@ -77,7 +77,7 @@ export default defineComponent({
       }
       const group = new DieGroup();
       group.name = name;
-      dieCollection.groups.unshift(group);
+      dieCollection.groups.push(group);
       selectedIndex.value = 0;
       dataUpdated();
     }
