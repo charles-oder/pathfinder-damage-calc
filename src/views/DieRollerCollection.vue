@@ -20,6 +20,15 @@
       <button @click="cloneGroup()">COPY</button>
       <button @click="deleteGroup()">DELETE</button>
     </div>
+    <TabSelector
+      :options="dieCollection.groups.map(group => group.name)"
+      :selectedIndex="selectedIndex"
+      v-on:option-clicked="itemSelected"
+      v-on:rename-clicked="renameGroup"
+      v-on:copy-clicked="cloneGroup"
+      v-on:delete-clicked="deleteGroup"
+      v-on:add-clicked="createNewGroup"
+    />
     <DieRoller
       v-for="(die, index) in dieCollection.groups[selectedIndex].dice"
       v-bind:key="index"
@@ -38,11 +47,13 @@ import { defineComponent, reactive, ref } from "vue";
 import DieRoller from "@/views/DieRoller.vue";
 import AppStorage from "@/storage";
 import { DieConfig, DieGroup } from "@/config/die-config";
+import TabSelector from "@/views/TabSelector.vue";
 
 export default defineComponent({
   name: "DieRollerCollection",
   components: {
-    DieRoller
+    DieRoller,
+    TabSelector
   },
   setup() {
     const appStore = new AppStorage();
@@ -73,27 +84,37 @@ export default defineComponent({
       dataUpdated();
     }
 
-    function deleteGroup() {
-      const name = dieCollection.groups[selectedIndex.value].name;
+    function deleteGroup(index: number = selectedIndex.value) {
+      const name = dieCollection.groups[index].name;
       if (!confirm("Delete " + name + "?")) {
         return;
       }
-      dieCollection.groups.splice(selectedIndex.value, 1);
+      dieCollection.groups.splice(index, 1);
       if (dieCollection.groups.length == 0) {
         dieCollection.groups.push(new DieGroup());
       }
-      selectedIndex.value = 0;
+      if (selectedIndex.value < 0) {
+        selectedIndex.value = 0;
+      }
+      if (selectedIndex.value >= index) {
+        selectedIndex.value = selectedIndex.value - 1;
+      }
+
       dataUpdated();
     }
 
-    function cloneGroup() {
-      const currentGroup = dieCollection.groups[selectedIndex.value];
+    function cloneGroup(index: number = selectedIndex.value) {
+      const currentGroup = dieCollection.groups[index];
       const copyJson = JSON.stringify(currentGroup);
       const clonedGroup = DieGroup.fromJson(copyJson);
       clonedGroup.name = clonedGroup.name + " copy";
       dieCollection.groups.unshift(clonedGroup);
       selectedIndex.value = 0;
       dataUpdated();
+    }
+
+    function renameGroup(index: number) {
+      alert("rename (not implemented): " + index);
     }
 
     function itemSelected(index: number) {
@@ -117,7 +138,8 @@ export default defineComponent({
       itemSelected,
       cloneGroup,
       createNewGroup,
-      deleteGroup
+      deleteGroup,
+      renameGroup
     };
   }
 });
