@@ -19,16 +19,7 @@
       class="die-roller"
     />
     <button @click="addRoll()" class="add-button">+</button>
-    <SelectName
-      v-model:isVisible="isNameChangeVisible"
-      v-model:name="pendingNameChange"
-      v-on:confirm-name-change="confirmNameChange"
-    />
-    <SelectName
-      v-model:isVisible="isNewNameVisible"
-      v-model:name="pendingNameChange"
-      v-on:confirm-name-change="confirmNewName"
-    />
+    <div id="test-modal"></div>
   </div>
 </template>
 
@@ -38,21 +29,19 @@ import DieRoller from "@/views/DieRoller.vue";
 import AppStorage from "@/storage";
 import { DieConfig, DieGroup } from "@/config/die-config";
 import TabSelector from "@/views/TabSelector.vue";
-import SelectName from "@/views/SelectName.vue";
+import NameSelectionModal from "@/modal/NameSelectionModal";
 
 export default defineComponent({
   name: "DieRollerCollection",
   components: {
     DieRoller,
-    TabSelector,
-    SelectName
+    TabSelector
   },
   setup() {
     const appStore = new AppStorage();
     const dieCollection = reactive(appStore.dieCollection);
     const selectedIndex = ref(0);
     const isNameChangeVisible = ref(false);
-    const isNewNameVisible = ref(false);
     const pendingNameChange = ref("");
     let pendingNameChangeIndex = -1;
 
@@ -74,9 +63,18 @@ export default defineComponent({
       appStore.dieCollection = dieCollection;
     }
 
+    function createNewGroupCallback(name: string | null) {
+      if (!name) {
+        return;
+      }
+      const group = new DieGroup();
+      group.name = name;
+      dieCollection.groups.unshift(group);
+      selectedIndex.value = 0;
+      dataUpdated();
+    }
     function createNewGroup() {
-      pendingNameChange.value = "New Group";
-      isNewNameVisible.value = true;
+      NameSelectionModal.show("New Group", createNewGroupCallback);
     }
 
     function deleteGroup(index: number = selectedIndex.value) {
@@ -108,24 +106,19 @@ export default defineComponent({
       dataUpdated();
     }
 
-    function renameGroup(index: number) {
-      const group = dieCollection.groups[index];
-      pendingNameChangeIndex = index;
-      pendingNameChange.value = group.name;
-      isNameChangeVisible.value = true;
-    }
-    function confirmNameChange() {
+    function reanameGroupCallback(name: string | null) {
+      if (!name) {
+        return;
+      }
       const group = dieCollection.groups[pendingNameChangeIndex];
-      group.name = pendingNameChange.value;
+      group.name = name;
       dataUpdated();
     }
 
-    function confirmNewName() {
-      const group = new DieGroup();
-      group.name = pendingNameChange.value;
-      dieCollection.groups.unshift(group);
-      selectedIndex.value = 0;
-      dataUpdated();
+    function renameGroup(index: number) {
+      const group = dieCollection.groups[index];
+      pendingNameChangeIndex = index;
+      NameSelectionModal.show(group.name, reanameGroupCallback);
     }
 
     function itemSelected(index: number) {
@@ -152,10 +145,7 @@ export default defineComponent({
       deleteGroup,
       renameGroup,
       pendingNameChange,
-      isNameChangeVisible,
-      confirmNameChange,
-      confirmNewName,
-      isNewNameVisible
+      isNameChangeVisible
     };
   }
 });
