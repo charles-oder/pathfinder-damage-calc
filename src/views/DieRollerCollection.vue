@@ -30,6 +30,7 @@ import AppStorage from "@/storage";
 import { DieConfig, DieGroup } from "@/config/die-config";
 import TabSelector from "@/views/TabSelector.vue";
 import NameSelectionModal from "@/modal/NameSelectionModal";
+import ConfirmationModal from "@/modal/ConfirmationModal";
 
 export default defineComponent({
   name: "DieRollerCollection",
@@ -43,7 +44,7 @@ export default defineComponent({
     const selectedIndex = ref(0);
     const isNameChangeVisible = ref(false);
     const pendingNameChange = ref("");
-    let pendingNameChangeIndex = -1;
+    let pendingModIndex = -1;
 
     function dataUpdated() {
       appStore.dieCollection = dieCollection;
@@ -54,13 +55,20 @@ export default defineComponent({
       appStore.dieCollection = dieCollection;
     }
 
-    function deleteRoll(index: number) {
-      const name = dieCollection.groups[selectedIndex.value].dice[index].name;
-      if (!confirm("Delete " + name + "?")) {
+    function deleteRollCallback(confirm: boolean) {
+      if (!confirm) {
         return;
       }
-      dieCollection.groups[selectedIndex.value].dice.splice(index, 1);
-      appStore.dieCollection = dieCollection;
+      dieCollection.groups[selectedIndex.value].dice.splice(pendingModIndex, 1);
+
+      dataUpdated();
+    }
+
+    function deleteRoll(index: number) {
+      pendingModIndex = index;
+      const name = dieCollection.groups[selectedIndex.value].dice[index].name;
+      const msg = "Delete Roll: " + name + "?";
+      ConfirmationModal.show(msg, deleteRollCallback);
     }
 
     function createNewGroupCallback(name: string | null) {
@@ -77,23 +85,29 @@ export default defineComponent({
       NameSelectionModal.show("New Group", createNewGroupCallback);
     }
 
-    function deleteGroup(index: number = selectedIndex.value) {
-      const name = dieCollection.groups[index].name;
-      if (!confirm("Delete " + name + "?")) {
+    function deleteGroupCallback(confirm: boolean) {
+      if (!confirm) {
         return;
       }
-      dieCollection.groups.splice(index, 1);
+      dieCollection.groups.splice(pendingModIndex, 1);
       if (dieCollection.groups.length == 0) {
         dieCollection.groups.push(new DieGroup());
+      }
+      if (selectedIndex.value >= pendingModIndex) {
+        selectedIndex.value = selectedIndex.value - 1;
       }
       if (selectedIndex.value < 0) {
         selectedIndex.value = 0;
       }
-      if (selectedIndex.value >= index) {
-        selectedIndex.value = selectedIndex.value - 1;
-      }
 
       dataUpdated();
+    }
+
+    function deleteGroup(index: number = selectedIndex.value) {
+      const name = dieCollection.groups[index].name;
+      const msg = "Delete group: " + name + "?";
+      pendingModIndex = index;
+      ConfirmationModal.show(msg, deleteGroupCallback);
     }
 
     function cloneGroup(index: number = selectedIndex.value) {
@@ -110,14 +124,14 @@ export default defineComponent({
       if (!name) {
         return;
       }
-      const group = dieCollection.groups[pendingNameChangeIndex];
+      const group = dieCollection.groups[pendingModIndex];
       group.name = name;
       dataUpdated();
     }
 
     function renameGroup(index: number) {
       const group = dieCollection.groups[index];
-      pendingNameChangeIndex = index;
+      pendingModIndex = index;
       NameSelectionModal.show(group.name, reanameGroupCallback);
     }
 
