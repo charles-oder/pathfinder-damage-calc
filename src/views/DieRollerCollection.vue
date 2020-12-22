@@ -1,25 +1,5 @@
 <template>
   <div class="die-roller-collection">
-    <div class="group-selector">
-      <select @change="itemSelected($event.target.selectedIndex)">
-        <option
-          v-for="(group, index) in dieCollection.groups"
-          v-bind:key="index"
-          value="{{ index }}"
-        >
-          {{ group.name }}
-        </option>
-      </select>
-      <input
-        @change="dataUpdated()"
-        v-model="dieCollection.groups[selectedIndex].name"
-      />
-    </div>
-    <div class="group-management-panel">
-      <button @click="createNewGroup()">NEW</button>
-      <button @click="cloneGroup()">COPY</button>
-      <button @click="deleteGroup()">DELETE</button>
-    </div>
     <TabSelector
       :options="dieCollection.groups.map(group => group.name)"
       :selectedIndex="selectedIndex"
