@@ -1,3 +1,5 @@
+import ModalStyles from "@/modal/ModalStyles";
+
 export default class NameSelectionModal {
   private static callback: (name: string | null) => void = () => {
     // default
@@ -5,28 +7,20 @@ export default class NameSelectionModal {
 
   public static show(name: string, callback: (name: string | null) => void) {
     NameSelectionModal.callback = callback;
-    const background = NameSelectionModal.createBackground();
-    const panel = NameSelectionModal.createMainPanel();
+    const background = ModalStyles.createBackground();
+    const panel = ModalStyles.createMainPanel();
     const inputContainer = NameSelectionModal.createInputPanel();
     const input = NameSelectionModal.createInput(name);
-    const buttonContainer = NameSelectionModal.createButtonPanel();
-    const confirmButton = NameSelectionModal.createButton(
-      "Confirm",
-      "green",
-      this.confirm
-    );
-    const cancelButton = NameSelectionModal.createButton(
-      "Cancel",
-      "red",
-      this.hide
-    );
+    const buttonContainer = ModalStyles.createButtonPanel();
+    const yesBtn = ModalStyles.createButton("Confirm", "green", this.confirm);
+    const noBtn = ModalStyles.createButton("Cancel", "red", this.cancel);
 
     background.appendChild(panel);
     panel.appendChild(inputContainer);
     inputContainer.appendChild(input);
     panel.appendChild(buttonContainer);
-    buttonContainer.appendChild(cancelButton);
-    buttonContainer.appendChild(confirmButton);
+    buttonContainer.appendChild(noBtn);
+    buttonContainer.appendChild(yesBtn);
 
     const anchor = document.getElementById("test-modal") as HTMLDivElement;
     if (anchor) {
@@ -34,29 +28,6 @@ export default class NameSelectionModal {
       anchor.appendChild(background);
       input.focus();
     }
-  }
-
-  private static createBackground(): HTMLElement {
-    const div = document.createElement("div");
-    div.style.position = "absolute";
-    div.style.top = "0";
-    div.style.left = "0";
-    div.style.height = "100vh";
-    div.style.width = "100vw";
-    div.style.background = "#0009";
-    return div;
-  }
-
-  private static createMainPanel(): HTMLElement {
-    const div = document.createElement("div");
-    div.style.padding = "20px";
-    div.style.background = "white";
-    div.style.position = "absolute";
-    div.style.top = "25%";
-    div.style.left = "50%";
-    div.style.transform = "translateX(-50%)";
-    div.style.borderRadius = "5px";
-    return div;
   }
 
   private static createInputPanel(): HTMLElement {
@@ -75,29 +46,6 @@ export default class NameSelectionModal {
       input.select();
     };
     return input;
-  }
-
-  private static createButtonPanel(): HTMLElement {
-    const buttonContainer = document.createElement("div") as HTMLDivElement;
-    return buttonContainer;
-  }
-
-  private static createButton(
-    name: string,
-    color: string,
-    onCLick: () => void
-  ): HTMLElement {
-    const button = document.createElement("button") as HTMLButtonElement;
-    button.style.border = "none";
-    button.style.fontSize = "1.5em";
-    button.style.fontWeight = "bold";
-    button.style.color = "white";
-    button.style.padding = "5px 10px";
-    button.style.margin = "5px 20px";
-    button.onclick = onCLick;
-    button.innerText = name;
-    button.style.background = color;
-    return button;
   }
 
   private static confirm() {
