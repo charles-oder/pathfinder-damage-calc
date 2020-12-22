@@ -5,8 +5,8 @@
         <input v-model="nameValue" type="text" />
       </div>
       <div class="button-container">
-        <button @click="cancel">Cancel</button>
-        <button @click="confirm">Confirm</button>
+        <button class="cancel" @click="cancel">Cancel</button>
+        <button class="confirm" @click="confirm">Confirm</button>
       </div>
     </div>
   </div>
@@ -64,6 +64,34 @@ export default defineComponent({
   height: 100vh;
   width: 100vw;
   background: #0009;
+}
+.modal-container {
+  padding: 20px;
+  background: white;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+}
+input {
+  font-size: 1.5em;
+}
+button {
+  font-size: 1.5em;
+  padding: 5px 10px;
+  border: none;
+  margin: 5px 20px;
+  color: white;
+}
+.button-container {
+  padding: 20px 0 0 0;
+}
+.cancel {
+  background: red;
+}
+.confirm {
+  background: green;
 }
 .visible {
   display: block;
