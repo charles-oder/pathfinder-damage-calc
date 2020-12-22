@@ -1,9 +1,12 @@
 <template>
   <div v-bind:class="['select-name', isVisible ? 'visible' : 'invisible']">
     <div class="modal-container">
-      <div class="title">Rename: {{ name }}</div>
       <div class="input-container">
-        <input v-model="nameValue" type="text" />
+        <input
+          @focus="$event.target.select()"
+          v-model="nameValue"
+          type="text"
+        />
       </div>
       <div class="button-container">
         <button class="cancel" @click="cancel">Cancel</button>

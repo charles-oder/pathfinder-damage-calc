@@ -24,6 +24,11 @@
       v-model:name="pendingNameChange"
       v-on:confirm-name-change="confirmNameChange"
     />
+    <SelectName
+      v-model:isVisible="isNewNameVisible"
+      v-model:name="pendingNameChange"
+      v-on:confirm-name-change="confirmNewName"
+    />
   </div>
 </template>
 
@@ -47,6 +52,7 @@ export default defineComponent({
     const dieCollection = reactive(appStore.dieCollection);
     const selectedIndex = ref(0);
     const isNameChangeVisible = ref(false);
+    const isNewNameVisible = ref(false);
     const pendingNameChange = ref("");
     let pendingNameChangeIndex = -1;
 
@@ -69,9 +75,8 @@ export default defineComponent({
     }
 
     function createNewGroup() {
-      dieCollection.groups.unshift(new DieGroup());
-      selectedIndex.value = 0;
-      dataUpdated();
+      pendingNameChange.value = "New Group";
+      isNewNameVisible.value = true;
     }
 
     function deleteGroup(index: number = selectedIndex.value) {
@@ -115,6 +120,14 @@ export default defineComponent({
       dataUpdated();
     }
 
+    function confirmNewName() {
+      const group = new DieGroup();
+      group.name = pendingNameChange.value;
+      dieCollection.groups.unshift(group);
+      selectedIndex.value = 0;
+      dataUpdated();
+    }
+
     function itemSelected(index: number) {
       if (index === dieCollection.groups.length) {
         createNewGroup();
@@ -140,7 +153,9 @@ export default defineComponent({
       renameGroup,
       pendingNameChange,
       isNameChangeVisible,
-      confirmNameChange
+      confirmNameChange,
+      confirmNewName,
+      isNewNameVisible
     };
   }
 });
