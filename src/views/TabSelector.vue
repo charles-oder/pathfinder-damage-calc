@@ -80,17 +80,18 @@ export default defineComponent({
 .tab-selector {
   position: relative;
   width: 100%;
-  background: yellow;
   display: flex;
   flex-wrap: wrap;
   cursor: pointer;
 }
 .tab {
   position: relative;
-  background: red;
+  background: #6279b8;
+  color: white;
+  font-weight: bold;
   margin: 2px 2px;
   display: inline-block;
-  padding: 5px;
+  padding: 5px 10px;
 }
 .context-menu {
   position: absolute;
@@ -111,6 +112,6 @@ export default defineComponent({
   display: none;
 }
 .selected {
-  background: blue;
+  background: #1e47b9;
 }
 </style>
