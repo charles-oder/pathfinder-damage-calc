@@ -98,10 +98,11 @@ export default defineComponent({
   top: 100%;
   left: 0;
   z-index: 1;
-  background: orange;
+  background: #8191be;
+  width: max(100%, 85px);
 }
 .menu-option {
-  padding: 2px 5px;
+  padding: 5px 5px;
 }
 
 .visible {
