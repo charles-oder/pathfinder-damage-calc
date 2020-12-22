@@ -3,6 +3,7 @@
     <div class="modal-container">
       <div class="input-container">
         <input
+          class="name-field"
           @focus="$event.target.select()"
           v-model="nameValue"
           type="text"
@@ -17,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, watch } from "vue";
 
 export default defineComponent({
   name: "SelectName",
@@ -42,6 +43,14 @@ export default defineComponent({
       }
     });
 
+    watch(isVisibleValue, (value, prev) => {
+      if (value && !prev) {
+        const elements = document.getElementsByClassName("name-field");
+        for (const element of elements) {
+          (element as HTMLInputElement).focus();
+        }
+      }
+    });
     function confirm() {
       emit("confirm-name-change");
       isVisibleValue.value = false;
