@@ -1,13 +1,13 @@
 <template>
   <div class="tab-selector">
-    <div
-      v-for="(option, index) in options"
-      v-bind:key="index"
-      v-bind:class="['tab', selectedIndex === index ? 'selected' : '']"
-      @contextmenu.prevent="showMenu(index)"
-      @click="optionClicked(index)"
-    >
-      {{ option }}
+    <div v-for="(option, index) in options" v-bind:key="index">
+      <div
+        v-bind:class="['tab', selectedIndex === index ? 'selected' : '']"
+        @click="optionClicked(index)"
+        @contextmenu.prevent="showMenu(index)"
+      >
+        {{ option }}
+      </div>
       <div
         v-bind:class="[
           'context-menu',
