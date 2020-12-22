@@ -4,10 +4,13 @@
       v-for="(option, index) in options"
       v-bind:key="index"
       v-bind:class="['tab', selectedIndex === index ? 'selected' : '']"
-      @contextmenu.prevent="showMenu(index)"
-      @click="optionClicked(index)"
     >
       {{ option }}
+      <div
+        class="selection-button"
+        @contextmenu.prevent="showMenu(index)"
+        @click="optionClicked(index)"
+      ></div>
       <div
         v-bind:class="[
           'context-menu',
@@ -101,6 +104,13 @@ export default defineComponent({
   z-index: 1;
   background: #8191be;
   width: max(100%, 85px);
+}
+.selection-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 .menu-option {
   padding: 5px 5px;
