@@ -39,6 +39,11 @@
       class="die-roller"
     />
     <button @click="addRoll()" class="add-button">+</button>
+    <SelectName
+      v-model:isVisible="isNameChangeVisible"
+      v-model:name="pendingNameChange"
+      v-on:confirm-name-change="confirmNameChange"
+    />
   </div>
 </template>
 
@@ -48,17 +53,22 @@ import DieRoller from "@/views/DieRoller.vue";
 import AppStorage from "@/storage";
 import { DieConfig, DieGroup } from "@/config/die-config";
 import TabSelector from "@/views/TabSelector.vue";
+import SelectName from "@/views/SelectName.vue";
 
 export default defineComponent({
   name: "DieRollerCollection",
   components: {
     DieRoller,
-    TabSelector
+    TabSelector,
+    SelectName
   },
   setup() {
     const appStore = new AppStorage();
     const dieCollection = reactive(appStore.dieCollection);
     const selectedIndex = ref(0);
+    const isNameChangeVisible = ref(false);
+    const pendingNameChange = ref("");
+    let pendingNameChangeIndex = -1;
 
     function dataUpdated() {
       appStore.dieCollection = dieCollection;
@@ -114,7 +124,15 @@ export default defineComponent({
     }
 
     function renameGroup(index: number) {
-      alert("rename (not implemented): " + index);
+      const group = dieCollection.groups[index];
+      pendingNameChangeIndex = index;
+      pendingNameChange.value = group.name;
+      isNameChangeVisible.value = true;
+    }
+    function confirmNameChange() {
+      const group = dieCollection.groups[pendingNameChangeIndex];
+      group.name = pendingNameChange.value;
+      dataUpdated();
     }
 
     function itemSelected(index: number) {
@@ -139,7 +157,10 @@ export default defineComponent({
       cloneGroup,
       createNewGroup,
       deleteGroup,
-      renameGroup
+      renameGroup,
+      pendingNameChange,
+      isNameChangeVisible,
+      confirmNameChange
     };
   }
 });
