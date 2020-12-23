@@ -18,8 +18,21 @@
         ]"
       >
         <div class="menu-option">
-          <span class="move-option" @click="moveLeft(index)">&lt;</span>
-          <span class="move-option" @click="moveRight(index)">&gt;</span>
+          <span class="caret left" v-if="index > 0"></span>
+          <span> Move </span>
+          <span class="caret right" v-if="index < groups.length - 1"></span>
+          <span
+            v-if="index > 0"
+            class="move-option left"
+            @click="moveLeft(index)"
+          >
+          </span>
+          <span
+            v-if="index < groups.length - 1"
+            class="move-option right"
+            @click="moveRight(index)"
+          >
+          </span>
         </div>
         <div class="menu-option" @click="renameIndex(index)">Rename</div>
         <div class="menu-option" @click="copyIndex(index)">Copy</div>
@@ -153,12 +166,32 @@ export default defineComponent({
   height: 100%;
 }
 .menu-option {
+  position: relative;
+  height: 1em;
   padding: 5px 5px;
 }
 
+.carat {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .move-option {
-  display: inline-block;
+  position: absolute;
   width: 50%;
+  height: 100%;
+}
+
+.left {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.right {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .visible {
@@ -170,5 +203,18 @@ export default defineComponent({
 }
 .selected {
   background: #1e47b9;
+}
+.caret {
+  width: 0;
+  height: 0;
+  transform: translateY(5px);
+  display: inline-block;
+  border: 8px solid transparent;
+}
+.caret.right {
+  border-left-color: white;
+}
+.caret.left {
+  border-right-color: white;
 }
 </style>
