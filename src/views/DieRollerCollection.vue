@@ -1,7 +1,7 @@
 <template>
   <div class="die-roller-collection">
     <TabSelector
-      :options="dieCollection.groups.map(group => group.name)"
+      :options="groups.map(group => group.name)"
       :selectedIndex="selectedIndex"
       v-on:option-clicked="itemSelected"
       v-on:rename-clicked="renameGroup"
@@ -10,11 +10,11 @@
       v-on:add-clicked="createNewGroup"
     />
     <DieRoller
-      v-for="(die, index) in dieCollection.groups[selectedIndex].dice"
+      v-for="(die, index) in dice"
       v-bind:key="index"
       v-model:name="die.name"
       v-model:dieString="die.dieString"
-      v-on:data-updated="dataUpdated()"
+      v-on:data-updated="name => dieNameUpdated(name, index)"
       v-on:delete-roll="deleteRoll(index)"
       class="die-roller"
     />
@@ -24,10 +24,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive, computed, ref, watch } from "vue";
 import DieRoller from "@/views/DieRoller.vue";
 import AppStorage from "@/storage";
-import { DieConfig, DieGroup } from "@/config/die-config";
+import { DieCollectionConfig, DieConfig, DieGroup } from "@/config/die-config";
 import TabSelector from "@/views/TabSelector.vue";
 import NameSelectionModal from "@/modal/NameSelectionModal";
 import ConfirmationModal from "@/modal/ConfirmationModal";
@@ -40,33 +40,80 @@ export default defineComponent({
   },
   setup() {
     const appStore = new AppStorage();
-    const dieCollection = reactive(appStore.dieCollection);
     const selectedIndex = ref(0);
     const isNameChangeVisible = ref(false);
     const pendingNameChange = ref("");
     let pendingModIndex = -1;
+    const dieCollection = computed({
+      get: () => appStore.dieCollection,
+      set: value => {
+        console.log("set dieCollection");
+        console.log(JSON.stringify(value));
+        appStore.dieCollection = value;
+        // Force Redraw
+        const index = selectedIndex.value;
+        selectedIndex.value = -1;
+        selectedIndex.value = index;
+      }
+    });
+    watch(dieCollection, (oldValue, newValue) => {
+      console.log("dieCollection set");
+      console.log(JSON.stringify(newValue));
+    });
+    const groups = computed({
+      get: () => appStore.dieCollection.groups,
+      set: value => {
+        console.log("set groups");
+        console.log(JSON.stringify(value));
+        const collection = dieCollection.value;
+        collection.groups = value;
+        dieCollection.value = collection;
+      }
+    });
+    const dice = computed({
+      get: () => {
+        if (selectedIndex.value >= groups.value.length) {
+          return [];
+        }
+        return groups.value[selectedIndex.value].dice;
+      },
+      set: value => {
+        console.log("set dice");
+        console.log(JSON.stringify(value));
+        const list = groups.value;
+        list[selectedIndex.value].dice = value;
+        groups.value = list;
+      }
+    });
 
-    function dataUpdated() {
-      appStore.dieCollection = dieCollection;
+    function dieNameUpdated(name: string, index: number) {
+      console.log("dataUpdated(" + name + "," + index + ")");
+      console.log(JSON.stringify(dieCollection.value));
+      const list = dice.value;
+      list[index].name = name;
+      dice.value = list;
     }
 
     function addRoll() {
-      dieCollection.groups[selectedIndex.value].dice.push(new DieConfig());
-      appStore.dieCollection = dieCollection;
+      console.log("addRoll");
+      const newDie = new DieConfig();
+      const list = dice.value;
+      list.push(newDie);
+      dice.value = list;
     }
 
     function deleteRollCallback(confirm: boolean) {
       if (!confirm) {
         return;
       }
-      dieCollection.groups[selectedIndex.value].dice.splice(pendingModIndex, 1);
-
-      dataUpdated();
+      const list = dice.value;
+      list.splice(pendingModIndex, 1);
+      dice.value = list;
     }
 
     function deleteRoll(index: number) {
       pendingModIndex = index;
-      const name = dieCollection.groups[selectedIndex.value].dice[index].name;
+      const name = dice.value[index].name;
       const msg = "Delete Roll: " + name + "?";
       ConfirmationModal.show(msg, deleteRollCallback);
     }
@@ -77,9 +124,10 @@ export default defineComponent({
       }
       const group = new DieGroup();
       group.name = name;
-      dieCollection.groups.push(group);
+      const list = groups.value;
+      list.push(group);
+      groups.value = list;
       selectedIndex.value = 0;
-      dataUpdated();
     }
     function createNewGroup() {
       NameSelectionModal.show("New Group", createNewGroupCallback);
@@ -89,9 +137,11 @@ export default defineComponent({
       if (!confirm) {
         return;
       }
-      dieCollection.groups.splice(pendingModIndex, 1);
-      if (dieCollection.groups.length == 0) {
-        dieCollection.groups.push(new DieGroup());
+      const list = groups.value;
+      list.splice(pendingModIndex, 1);
+      groups.value = list;
+      if (groups.value.length == 0) {
+        groups.value.push(new DieGroup());
       }
       if (selectedIndex.value >= pendingModIndex) {
         selectedIndex.value = selectedIndex.value - 1;
@@ -99,48 +149,48 @@ export default defineComponent({
       if (selectedIndex.value < 0) {
         selectedIndex.value = 0;
       }
-
-      dataUpdated();
     }
 
     function deleteGroup(index: number = selectedIndex.value) {
-      const name = dieCollection.groups[index].name;
+      const name = groups.value[index].name;
       const msg = "Delete group: " + name + "?";
       pendingModIndex = index;
       ConfirmationModal.show(msg, deleteGroupCallback);
     }
 
     function cloneGroup(index: number = selectedIndex.value) {
-      const currentGroup = dieCollection.groups[index];
+      const currentGroup = groups.value[index];
       const copyJson = JSON.stringify(currentGroup);
       const clonedGroup = DieGroup.fromJson(copyJson);
       clonedGroup.name = clonedGroup.name + " copy";
-      dieCollection.groups.unshift(clonedGroup);
-      selectedIndex.value = 0;
-      dataUpdated();
+      const list = groups.value;
+      list.push(clonedGroup);
+      groups.value = list;
+      selectedIndex.value = list.length - 1;
     }
 
     function reanameGroupCallback(name: string | null) {
       if (!name) {
         return;
       }
-      const group = dieCollection.groups[pendingModIndex];
+      const list = groups.value;
+      const group = list[pendingModIndex];
       group.name = name;
-      dataUpdated();
+      groups.value = JSON.parse(JSON.stringify(list));
     }
 
     function renameGroup(index: number) {
-      const group = dieCollection.groups[index];
+      const group = groups.value[index];
       pendingModIndex = index;
       NameSelectionModal.show(group.name, reanameGroupCallback);
     }
 
     function itemSelected(index: number) {
-      if (index === dieCollection.groups.length) {
+      if (index === groups.value.length) {
         createNewGroup();
-      } else if (index === dieCollection.groups.length + 1) {
+      } else if (index === groups.value.length + 1) {
         cloneGroup();
-      } else if (index === dieCollection.groups.length + 2) {
+      } else if (index === groups.value.length + 2) {
         deleteGroup();
       } else {
         selectedIndex.value = index;
@@ -148,8 +198,7 @@ export default defineComponent({
     }
 
     return {
-      dieCollection,
-      dataUpdated,
+      dieNameUpdated,
       addRoll,
       deleteRoll,
       selectedIndex,
@@ -158,6 +207,8 @@ export default defineComponent({
       createNewGroup,
       deleteGroup,
       renameGroup,
+      groups,
+      dice,
       pendingNameChange,
       isNameChangeVisible
     };
