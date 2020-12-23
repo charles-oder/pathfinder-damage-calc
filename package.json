@@ -1,6 +1,6 @@
 {
   "name": "d20-tools",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "private": true,
   "scripts": {
     "serve": "./getGitHistory.sh; vue-cli-service serve",
