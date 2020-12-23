@@ -1,7 +1,7 @@
 <template>
   <div class="die-roller-collection">
     <TabSelector
-      v-if="showTabs"
+      :key="showTabs"
       v-model:options="groups"
       :selectedIndex="selectedIndex"
       v-on:option-clicked="itemSelected"
@@ -12,20 +12,22 @@
       v-on:move-left="moveGroupLeft"
       v-on:move-right="moveGroupRight"
     />
-    <VueDraggableNext v-model="dice">
-      <transition-group>
-        <DieRoller
-          v-for="(die, index) in dice"
-          v-bind:key="index"
-          v-model:name="die.name"
-          v-model:dieString="die.dieString"
-          v-on:data-updated="(name, die) => dieNameUpdated(name, die, index)"
-          v-on:delete-roll="deleteRoll(index)"
-          class="die-roller"
-        />
-      </transition-group>
-    </VueDraggableNext>
-    <button @click="addRoll()" class="add-button">+</button>
+    <div :key="showTabs">
+      <VueDraggableNext v-model="dice" @dragend="forceRedraw">
+        <transition-group>
+          <DieRoller
+            v-for="(die, index) in dice"
+            v-bind:key="index"
+            v-model:name="die.name"
+            v-model:dieString="die.dieString"
+            v-on:data-updated="(name, die) => dieNameUpdated(name, die, index)"
+            v-on:delete-roll="deleteRoll(index)"
+            class="die-roller"
+          />
+        </transition-group>
+      </VueDraggableNext>
+      <button @click="addRoll()" class="add-button">+</button>
+    </div>
     <div id="test-modal"></div>
   </div>
 </template>
@@ -56,7 +58,6 @@ export default defineComponent({
     const dieCollection = computed({
       get: () => appStore.dieCollection,
       set: value => {
-        console.log("collection updated in roller: " + JSON.stringify(value));
         appStore.dieCollection = value;
       }
     });
@@ -64,7 +65,6 @@ export default defineComponent({
       get: () => appStore.dieCollection.groups,
       set: value => {
         const names = JSON.stringify(value.map(obj => obj.name));
-        console.log("groups updated in roller: " + names);
         const collection = dieCollection.value;
         collection.groups = value;
         dieCollection.value = collection;
@@ -72,13 +72,13 @@ export default defineComponent({
     });
     const dice = computed({
       get: () => {
-        if (selectedIndex.value >= groups.value.length) {
+        const index = selectedIndex.value;
+        if (index < 0 || index >= groups.value.length) {
           return [];
         }
-        return groups.value[selectedIndex.value].dice;
+        return groups.value[index].dice;
       },
       set: value => {
-        console.log("dice updated in roller: " + value);
         const list = groups.value;
         list[selectedIndex.value].dice = value;
         groups.value = list;
@@ -95,11 +95,21 @@ export default defineComponent({
       dice.value = list;
     }
 
+    function forceRedraw() {
+      console.log("Force Update");
+      const index = selectedIndex.value;
+      selectedIndex.value = -1;
+
+      setTimeout(() => (showTabs.value = !showTabs.value), 1);
+      setTimeout(() => (selectedIndex.value = index), 1);
+    }
+
     function addRoll() {
       const newDie = new DieConfig();
       const list = dice.value;
       list.push(newDie);
       dice.value = list;
+      forceRedraw();
     }
 
     function deleteRollCallback(confirm: boolean) {
@@ -109,10 +119,7 @@ export default defineComponent({
       const list = dice.value;
       list.splice(pendingModIndex, 1);
       dice.value = list;
-    }
-    function forceRedraw() {
-      showTabs.value = false;
-      setTimeout(() => (showTabs.value = true), 1);
+      forceRedraw();
     }
 
     function deleteRoll(index: number) {
@@ -258,7 +265,8 @@ export default defineComponent({
       pendingNameChange,
       showTabs,
       moveGroupLeft,
-      moveGroupRight
+      moveGroupRight,
+      forceRedraw
     };
   }
 });
