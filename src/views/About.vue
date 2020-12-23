@@ -2,6 +2,12 @@
   <div class="about">
     <h1>D20 Tools v{{ viewModel.versionNumber() }}</h1>
   </div>
+  <a
+    href="https://github.com/charles-oder/pathfinder-damage-calc/issues"
+    target="_blank"
+  >
+    Report an Issue
+  </a>
   <div class="history" v-for="version in versions" v-bind:key="version.name">
     <h2>{{ version.version }}</h2>
     <ul>
