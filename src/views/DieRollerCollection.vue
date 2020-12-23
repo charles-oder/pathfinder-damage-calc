@@ -1,7 +1,8 @@
 <template>
   <div class="die-roller-collection">
     <TabSelector
-      :options="groups.map(group => group.name)"
+      v-if="showTabs"
+      v-model:options="groups"
       :selectedIndex="selectedIndex"
       v-on:option-clicked="itemSelected"
       v-on:rename-clicked="renameGroup"
@@ -47,25 +48,31 @@ export default defineComponent({
   setup() {
     const appStore = new AppStorage();
     const selectedIndex = ref(0);
-    const isNameChangeVisible = ref(false);
+    const showTabs = ref(true);
     const pendingNameChange = ref("");
     let pendingModIndex = -1;
     const dieCollection = computed({
       get: () => appStore.dieCollection,
       set: value => {
+        console.log("collection updated in roller: " + JSON.stringify(value));
         appStore.dieCollection = value;
         // Force Redraw
-        const index = selectedIndex.value;
-        selectedIndex.value = -1;
-        selectedIndex.value = index;
+        showTabs.value = false;
+        setTimeout(() => (showTabs.value = true), 1);
       }
     });
     const groups = computed({
       get: () => appStore.dieCollection.groups,
       set: value => {
+        const names = JSON.stringify(value.map(obj => obj.name));
+        console.log("groups updated in roller: " + names);
         const collection = dieCollection.value;
         collection.groups = value;
         dieCollection.value = collection;
+        // Force Redraw
+        const index = selectedIndex.value;
+        selectedIndex.value = -1;
+        selectedIndex.value = index;
       }
     });
     const dice = computed({
@@ -76,6 +83,7 @@ export default defineComponent({
         return groups.value[selectedIndex.value].dice;
       },
       set: value => {
+        console.log("dice updated in roller: " + value);
         const list = groups.value;
         list[selectedIndex.value].dice = value;
         groups.value = list;
@@ -207,7 +215,7 @@ export default defineComponent({
       groups,
       dice,
       pendingNameChange,
-      isNameChangeVisible
+      showTabs
     };
   }
 });

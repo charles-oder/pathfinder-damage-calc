@@ -1,11 +1,11 @@
 <template>
   <div class="tab-selector">
     <div
-      v-for="(option, index) in options"
+      v-for="(option, index) in groups"
       v-bind:key="index"
       v-bind:class="['tab', selectedIndex === index ? 'selected' : '']"
     >
-      {{ option }}
+      {{ option.name }}
       <div
         class="selection-button"
         @contextmenu.prevent="showMenu(index)"
@@ -17,6 +17,10 @@
           openContextMenu === index ? 'visible' : 'invisible'
         ]"
       >
+        <div class="menu-option">
+          <span class="move-option" @click="moveLeft(index)">&lt;</span>
+          <span class="move-option" @click="moveRight(index)">&gt;</span>
+        </div>
         <div class="menu-option" @click="renameIndex(index)">Rename</div>
         <div class="menu-option" @click="copyIndex(index)">Copy</div>
         <div class="menu-option" @click="deleteIndex(index)">Delete</div>
@@ -27,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "TabSelector",
@@ -38,6 +42,13 @@ export default defineComponent({
     selectedIndex: Number
   },
   setup(props, { emit }) {
+    const groups = computed({
+      get: () => props.options,
+      set: value => {
+        console.log("groups updated in tab bar");
+        emit("update:options", value);
+      }
+    });
     const openContextMenu = ref(-1);
     function optionClicked(index: number) {
       openContextMenu.value = -1;
@@ -62,6 +73,31 @@ export default defineComponent({
       openContextMenu.value = -1;
       emit("delete-clicked", index);
     }
+    function moveLeft(index: number) {
+      console.log("move left: " + index);
+      if (index === 0) {
+        return;
+      }
+      const list = groups.value ?? [];
+      const group = list[index];
+      if (group) {
+        list?.splice(index, 1);
+        list?.splice(index - 1, 0, group);
+        groups.value = list;
+      }
+    }
+    function moveRight(index: number) {
+      if (index >= (groups.value?.length ?? 0) - 1) {
+        return;
+      }
+      const list = groups.value ?? [];
+      const group = list[index];
+      if (group) {
+        list?.splice(index, 1);
+        list?.splice(index + 1, 0, group);
+        groups.value = list;
+      }
+    }
     function addGroup() {
       openContextMenu.value = -1;
       emit("add-clicked");
@@ -73,7 +109,10 @@ export default defineComponent({
       renameIndex,
       copyIndex,
       deleteIndex,
-      addGroup
+      addGroup,
+      groups,
+      moveLeft,
+      moveRight
     };
   }
 });
@@ -109,11 +148,17 @@ export default defineComponent({
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
 }
 .menu-option {
   padding: 5px 5px;
+}
+
+.move-option {
+  display: inline-block;
+  width: 50%;
 }
 
 .visible {
