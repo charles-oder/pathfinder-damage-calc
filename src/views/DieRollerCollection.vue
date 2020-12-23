@@ -9,15 +9,19 @@
       v-on:delete-clicked="deleteGroup"
       v-on:add-clicked="createNewGroup"
     />
-    <DieRoller
-      v-for="(die, index) in dice"
-      v-bind:key="index"
-      v-model:name="die.name"
-      v-model:dieString="die.dieString"
-      v-on:data-updated="name => dieNameUpdated(name, index)"
-      v-on:delete-roll="deleteRoll(index)"
-      class="die-roller"
-    />
+    <VueDraggableNext v-model="dice">
+      <transition-group>
+        <DieRoller
+          v-for="(die, index) in dice"
+          v-bind:key="index"
+          v-model:name="die.name"
+          v-model:dieString="die.dieString"
+          v-on:data-updated="name => dieNameUpdated(name, index)"
+          v-on:delete-roll="deleteRoll(index)"
+          class="die-roller"
+        />
+      </transition-group>
+    </VueDraggableNext>
     <button @click="addRoll()" class="add-button">+</button>
     <div id="test-modal"></div>
   </div>
@@ -31,12 +35,14 @@ import { DieCollectionConfig, DieConfig, DieGroup } from "@/config/die-config";
 import TabSelector from "@/views/TabSelector.vue";
 import NameSelectionModal from "@/modal/NameSelectionModal";
 import ConfirmationModal from "@/modal/ConfirmationModal";
+import { VueDraggableNext } from "vue-draggable-next";
 
 export default defineComponent({
   name: "DieRollerCollection",
   components: {
     DieRoller,
-    TabSelector
+    TabSelector,
+    VueDraggableNext
   },
   setup() {
     const appStore = new AppStorage();
@@ -47,8 +53,6 @@ export default defineComponent({
     const dieCollection = computed({
       get: () => appStore.dieCollection,
       set: value => {
-        console.log("set dieCollection");
-        console.log(JSON.stringify(value));
         appStore.dieCollection = value;
         // Force Redraw
         const index = selectedIndex.value;
@@ -56,15 +60,9 @@ export default defineComponent({
         selectedIndex.value = index;
       }
     });
-    watch(dieCollection, (oldValue, newValue) => {
-      console.log("dieCollection set");
-      console.log(JSON.stringify(newValue));
-    });
     const groups = computed({
       get: () => appStore.dieCollection.groups,
       set: value => {
-        console.log("set groups");
-        console.log(JSON.stringify(value));
         const collection = dieCollection.value;
         collection.groups = value;
         dieCollection.value = collection;
@@ -78,8 +76,6 @@ export default defineComponent({
         return groups.value[selectedIndex.value].dice;
       },
       set: value => {
-        console.log("set dice");
-        console.log(JSON.stringify(value));
         const list = groups.value;
         list[selectedIndex.value].dice = value;
         groups.value = list;
@@ -87,15 +83,12 @@ export default defineComponent({
     });
 
     function dieNameUpdated(name: string, index: number) {
-      console.log("dataUpdated(" + name + "," + index + ")");
-      console.log(JSON.stringify(dieCollection.value));
       const list = dice.value;
       list[index].name = name;
       dice.value = list;
     }
 
     function addRoll() {
-      console.log("addRoll");
       const newDie = new DieConfig();
       const list = dice.value;
       list.push(newDie);
