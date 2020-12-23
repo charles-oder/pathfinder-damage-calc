@@ -51,7 +51,6 @@ export default defineComponent({
   components: {},
   props: {
     options: Array,
-    index: Number,
     selectedIndex: Number
   },
   setup(props, { emit }) {
@@ -87,29 +86,10 @@ export default defineComponent({
       emit("delete-clicked", index);
     }
     function moveLeft(index: number) {
-      console.log("move left: " + index);
-      if (index === 0) {
-        return;
-      }
-      const list = groups.value ?? [];
-      const group = list[index];
-      if (group) {
-        list?.splice(index, 1);
-        list?.splice(index - 1, 0, group);
-        groups.value = list;
-      }
+      emit("move-left", index);
     }
     function moveRight(index: number) {
-      if (index >= (groups.value?.length ?? 0) - 1) {
-        return;
-      }
-      const list = groups.value ?? [];
-      const group = list[index];
-      if (group) {
-        list?.splice(index, 1);
-        list?.splice(index + 1, 0, group);
-        groups.value = list;
-      }
+      emit("move-right", index);
     }
     function addGroup() {
       openContextMenu.value = -1;

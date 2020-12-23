@@ -9,6 +9,8 @@
       v-on:copy-clicked="cloneGroup"
       v-on:delete-clicked="deleteGroup"
       v-on:add-clicked="createNewGroup"
+      v-on:move-left="moveGroupLeft"
+      v-on:move-right="moveGroupRight"
     />
     <VueDraggableNext v-model="dice">
       <transition-group>
@@ -56,9 +58,6 @@ export default defineComponent({
       set: value => {
         console.log("collection updated in roller: " + JSON.stringify(value));
         appStore.dieCollection = value;
-        // Force Redraw
-        showTabs.value = false;
-        setTimeout(() => (showTabs.value = true), 1);
       }
     });
     const groups = computed({
@@ -111,6 +110,10 @@ export default defineComponent({
       list.splice(pendingModIndex, 1);
       dice.value = list;
     }
+    function forceRedraw() {
+      showTabs.value = false;
+      setTimeout(() => (showTabs.value = true), 1);
+    }
 
     function deleteRoll(index: number) {
       pendingModIndex = index;
@@ -128,10 +131,49 @@ export default defineComponent({
       const list = groups.value;
       list.push(group);
       groups.value = list;
-      selectedIndex.value = 0;
+      selectedIndex.value = list.length - 1;
+      forceRedraw();
     }
     function createNewGroup() {
       NameSelectionModal.show("New Group", createNewGroupCallback);
+    }
+
+    function moveGroupLeft(index: number) {
+      if (index === 0) {
+        return;
+      }
+      const list = groups.value ?? [];
+      const group = list[index];
+      if (group) {
+        list?.splice(index, 1);
+        list?.splice(index - 1, 0, group);
+        groups.value = list;
+      }
+      if (selectedIndex.value === index) {
+        selectedIndex.value--;
+      } else if (selectedIndex.value === index - 1) {
+        selectedIndex.value++;
+      }
+      forceRedraw();
+    }
+
+    function moveGroupRight(index: number) {
+      if (index >= (groups.value?.length ?? 0) - 1) {
+        return;
+      }
+      const list = groups.value ?? [];
+      const group = list[index];
+      if (group) {
+        list?.splice(index, 1);
+        list?.splice(index + 1, 0, group);
+        groups.value = list;
+      }
+      if (selectedIndex.value === index) {
+        selectedIndex.value++;
+      } else if (selectedIndex.value === index + 1) {
+        selectedIndex.value--;
+      }
+      forceRedraw();
     }
 
     function deleteGroupCallback(confirm: boolean) {
@@ -150,6 +192,7 @@ export default defineComponent({
       if (selectedIndex.value < 0) {
         selectedIndex.value = 0;
       }
+      forceRedraw();
     }
 
     function deleteGroup(index: number = selectedIndex.value) {
@@ -168,6 +211,7 @@ export default defineComponent({
       list.push(clonedGroup);
       groups.value = list;
       selectedIndex.value = list.length - 1;
+      forceRedraw();
     }
 
     function reanameGroupCallback(name: string | null) {
@@ -178,6 +222,7 @@ export default defineComponent({
       const group = list[pendingModIndex];
       group.name = name;
       groups.value = JSON.parse(JSON.stringify(list));
+      forceRedraw();
     }
 
     function renameGroup(index: number) {
@@ -211,7 +256,9 @@ export default defineComponent({
       groups,
       dice,
       pendingNameChange,
-      showTabs
+      showTabs,
+      moveGroupLeft,
+      moveGroupRight
     };
   }
 });
