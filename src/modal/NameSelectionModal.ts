@@ -42,6 +42,14 @@ export default class NameSelectionModal {
     input.value = name;
     input.style.fontSize = "1.5em";
     input.style.textAlign = "center";
+    input.onkeydown = key => {
+      console.log(key);
+      if (key.code === "Enter") {
+        this.confirm();
+      } else if (key.code === "Escape") {
+        this.cancel();
+      }
+    };
     input.onfocus = () => {
       input.select();
     };

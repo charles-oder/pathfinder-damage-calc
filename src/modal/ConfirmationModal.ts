@@ -27,12 +27,30 @@ export default class ConfirmationModal {
       anchor.innerHTML = "";
       anchor.appendChild(background);
     }
+
+    const hiddenInput = this.createHiddenKeyboardListener();
+    background.appendChild(hiddenInput);
+    hiddenInput.focus();
   }
 
   private static createTitlePanel(): HTMLElement {
     const div = document.createElement("div");
     div.style.padding = "20px 0 0 0";
     return div;
+  }
+
+  private static createHiddenKeyboardListener() {
+    const hiddenInput = document.createElement("input");
+    hiddenInput.style.opacity = "0";
+    hiddenInput.onkeydown = key => {
+      console.log(key);
+      if (key.code === "Enter") {
+        this.confirm();
+      } else if (key.code === "Escape") {
+        this.cancel();
+      }
+    };
+    return hiddenInput;
   }
 
   private static createTitleElement(title: string): HTMLElement {
