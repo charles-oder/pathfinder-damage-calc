@@ -16,7 +16,7 @@
           v-bind:key="index"
           v-model:name="die.name"
           v-model:dieString="die.dieString"
-          v-on:data-updated="name => dieNameUpdated(name, index)"
+          v-on:data-updated="(name, die) => dieNameUpdated(name, die, index)"
           v-on:delete-roll="deleteRoll(index)"
           class="die-roller"
         />
@@ -82,9 +82,13 @@ export default defineComponent({
       }
     });
 
-    function dieNameUpdated(name: string, index: number) {
+    function dieNameUpdated(name: string, die: string, index: number) {
       const list = dice.value;
+      const dieConfig = new DieConfig();
+      dieConfig.name = name;
+      dieConfig.dieString = die;
       list[index].name = name;
+      list[index].dieString = die;
       dice.value = list;
     }
 

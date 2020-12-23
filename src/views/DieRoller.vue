@@ -36,14 +36,14 @@ export default defineComponent({
       get: () => props.name,
       set: value => {
         emit("update:name", value);
-        emit("data-updated", value);
+        emit("data-updated", value, props.dieString ?? "");
       }
     });
     const dieStringValue = computed({
       get: () => props.dieString,
       set: value => {
         emit("update:dieString", value);
-        emit("data-updated");
+        emit("data-updated", props.name ?? "", value);
       }
     });
 
