@@ -69,10 +69,6 @@ export default defineComponent({
         const collection = dieCollection.value;
         collection.groups = value;
         dieCollection.value = collection;
-        // Force Redraw
-        const index = selectedIndex.value;
-        selectedIndex.value = -1;
-        selectedIndex.value = index;
       }
     });
     const dice = computed({
